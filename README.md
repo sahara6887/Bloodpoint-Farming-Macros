@@ -21,3 +21,4 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 # FPS Switch (sleep)
 - Slowly switches between 30 & 120 FPS.
 - F3 = Set 30 FPS / F4 = Set 120 FPS
+- **NOTE:** This version of the FPS Switch macro can potentially work better for non-standard configurations (shaders, filters, etc).
