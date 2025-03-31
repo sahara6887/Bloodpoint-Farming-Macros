@@ -40,12 +40,11 @@ openGraphicsSettings() {
 
     ; Sometimes the game lags with black screen when opening menu first time.
     ; Wait for the screen to open.
-    ; Note that the [ ESC ] button looks pure white, but is slightly off white!
-    waitUntilColor(1999, 100, 0xFFFFFF) ; 'E' of MATCH DETAILS
+    ; Note that the [ ESC ] (295, 1350) button looks pure white, but is slightly off white!
+    doWithRetriesUntil("doNothing", "isSettingsOpen")
 
     ; Select "Graphics" tab
-    scaledClick(988, 94)
-    waitUntilColor(950, 100, 0xFFFFFF) ; 'R' of 'GRAPHICS'
+    doWithRetriesUntil("selectGraphicsTab", "isGraphicsTabSelected")
 
     ; Open FPS dropdown
     scaledClick(1350, 938)
@@ -58,30 +57,74 @@ closeSettings() {
     Send, {ESC}
 }
 
-waitUntilColor(x, y, expectedColor) {
+isSettingsOpen() {
+    ; 'E' of MATCH DETAILS (1999, 100)
+    ; ']' of ESC: (295, 1350)
+    color := getColor(1999, 100)
+
+    ; The pixel starts off-white and eventually becomes full white.
+    ; We only care if each RGB component is > 0xF8, so we'll mask the low bits
+    maskedColor := color | 0x070707
+    return maskedColor = 0xFFFFFF
+}
+
+selectGraphicsTab() {
+    scaledClick(988, 94)
+}
+
+isGraphicsTabSelected() {
+    ; 'R' of 'GRAPHICS': (950, 100)
+    return (getColor(950, 100) | 0x030303) = 0xFFFFFF
+}
+
+doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
+    startTime := A_TickCount  ; Get the current time (in milliseconds)
+    action := Func(actionName)
+    predicate := Func(predicateName)
+
+    while (A_TickCount - startTime < maxDurationMs) {
+        action.call()
+        result := predicate.call()
+        if (result) {
+            duration := A_TickCount - startTime
+            log(predicateName . " took " . duration . " ms.")
+            return
+        }
+        Sleep, 25
+    }
+
+    log("Failed waiting for " . predicate.Name . " after " . maxDurationMs . " ms.")
+
+    Exit
+}
+
+getColor(x, y) {
     global xScale, yScale
     scaledX := Round(x * xScale)
     scaledY := Round(y * yScale)
 
-    ; ToolTip ; Uncomment for debugging
-    ; Looping 200 times is roughly 2 seconds on my PC -- long enough.
-    Loop, 200
-    {
-        PixelGetColor, color, scaledX, scaledY
-        if (color = expectedColor)
-        {
-            return
-        }
-    }
-    ; ToolTip, (%x% %y%) * %xScale% = ( %scaledX%  %scaledY% ) %color% != %expectedColor% ; Uncomment for debugging
-    Exit
+    PixelGetColor, color, scaledX, scaledY
+    return color
 }
 
+; Click on the scaled coords.
+; Prevent mouse movement from the user which may cause the click to miss
 scaledClick(x, y) {
     global xScale, yScale
 
     scaledX := Round(x * xScale)
     scaledY := Round(y * yScale)
 
+    BlockInput, MouseMove  ; Block mouse movement
     Click, %scaledX%, %scaledY%
+    BlockInput, MouseMoveOff  ; Re-enable mouse movement
+}
+
+log(msg) {
+    ; Uncomment while developing:
+    ; OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
+}
+
+doNothing() {
+    ; used as a noop for doWithRetriesUntil(action, predicate)
 }
