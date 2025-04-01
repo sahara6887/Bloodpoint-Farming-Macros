@@ -1,4 +1,5 @@
-﻿#Persistent
+﻿#SingleInstance Force
+#Persistent
 #IfWinActive DeadByDaylight
 
 CoordMode, Pixel, Window
