@@ -1,4 +1,5 @@
-﻿#Persistent
+﻿#SingleInstance Force
+#Persistent
 #IfWinActive DeadByDaylight
 WinGetPos, ignoredX, ignoredY, DbdWidth, DbdHeight, DeadByDaylight
 
