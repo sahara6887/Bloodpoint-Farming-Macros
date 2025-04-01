@@ -1,10 +1,5 @@
 ﻿#Persistent
 #IfWinActive DeadByDaylight
-WinGetPos, ignoredX, ignoredY, DbdWidth, DbdHeight, DeadByDaylight
-
-; Scaling factor for monitors at resolutions other than 2560x1440
-xScale := DbdWidth / 2560
-yScale := DbdHeight / 1440
 
 CoordMode, Pixel, Window
 
@@ -13,26 +8,48 @@ SetMouseDelay, -1 ; Make cursor move instantly rather than mimicking user behavi
 ; Set 30 FPS
 F3::
 {
-    openGraphicsSettings()
-
     ; 30 FPS option
-    scaledClick(1760, 778)
-
-    closeSettings()
+    selectFpsOption(1760, 778)
 }
 return
 
 ; Set 120 FPS
 F4::
 {
-    openGraphicsSettings()
-
     ; 120 FPS option
-    scaledClick(1778, 1084)
-
-    closeSettings()
+    selectFpsOption(1778, 1084)
 }
 return
+
+; Selects an option from the FPS dropdown at the specified pixel coordinates
+; relative to a 1440p resolution. These will be scaled for non-1440p resolutions.
+selectFpsOption(x, y) {
+    start := A_TickCount
+
+    detectDbdWindowScale()
+    openGraphicsSettings()
+
+    ; 30 FPS option
+    scaledClick(x, y)
+
+    closeSettings()
+
+    log("Setting FPS took " . (A_TickCount - start) . " ms")
+}
+
+; All pixel coordinates are relative to Snoggles 1440p monitor.
+; Detect a scaling factor for other resolutions such as 1080p.
+; This should be tested every time in case the resolution changes.
+; Runtime of this function was measured at 0 ms, so it's effectively free.
+detectDbdWindowScale() {
+    global xScale, yScale
+
+    WinGetPos, ignoredX, ignoredY, DbdWidth, DbdHeight, DeadByDaylight
+
+    ; Scaling factor for monitors at resolutions other than 2560x1440
+    xScale := DbdWidth / 2560
+    yScale := DbdHeight / 1440
+}
 
 openGraphicsSettings() {
     ; Open Settings
@@ -104,6 +121,8 @@ getColor(x, y) {
     scaledY := Round(y * yScale)
 
     PixelGetColor, color, scaledX, scaledY
+
+    log("get color at (" . scaledX . ", " . scaledY . ") color=" . color)
     return color
 }
 
