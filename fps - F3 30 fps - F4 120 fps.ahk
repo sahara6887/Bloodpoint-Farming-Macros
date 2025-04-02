@@ -25,6 +25,7 @@ return
 ; Selects an option from the FPS dropdown at the specified pixel coordinates
 ; relative to a 1440p resolution. These will be scaled for non-1440p resolutions.
 selectFpsOption(x, y) {
+    global settingFpsTookMs
     start := A_TickCount
 
     detectDbdWindowScale()
@@ -35,7 +36,8 @@ selectFpsOption(x, y) {
 
     closeSettings()
 
-    log("Setting FPS took " . (A_TickCount - start) . " ms")
+    settingFpsTookMs := A_TickCount - start
+    log("Setting FPS took " . settingFpsTookMs . " ms")
 }
 
 ; All pixel coordinates are relative to Snoggles 1440p monitor.
@@ -117,14 +119,14 @@ doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
 }
 
 getColor(x, y) {
-    global xScale, yScale
+    global xScale, yScale, lastCheckedColor
     scaledX := Round(x * xScale)
     scaledY := Round(y * yScale)
 
-    PixelGetColor, color, scaledX, scaledY
+    PixelGetColor, lastCheckedColor, scaledX, scaledY
 
-    log("get color at (" . scaledX . ", " . scaledY . ") color=" . color)
-    return color
+    log("get color at (" . scaledX . ", " . scaledY . ") color=" . lastCheckedColor)
+    return lastCheckedColor
 }
 
 ; Click on the scaled coords.
