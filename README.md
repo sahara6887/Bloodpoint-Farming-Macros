@@ -2,7 +2,7 @@
 Here you can find macros that will help with the repetitive/tedious aspects of farming bloodpoints in Dead by Daylight!
 
 > [!CAUTION]
-> While these macros are not intended to give a competitive advantage, they are at odds with the bhvr terms of use. Use them at your own risk.
+> While these macros are not intended to give a competitive advantage, they are at odds with the BHVR Terms of Use. Use them at your own risk.
 
 **NOTES:**
 - All .ahk files require [Auto Hotkey v1.1](https://www.autohotkey.com/download/ahk-install.exe).
@@ -24,7 +24,7 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 ## FPS Switch (sleep)
 - Slowly switches between 30 & 120 FPS.
 - F3 = Set 30 FPS / F4 = Set 120 FPS
-- **NOTE:** This version of the FPS Switch macro can potentially work better for non-standard configurations (shaders, filters, etc).
+- This version of the FPS Switch macro can potentially work better for non-standard configurations (shaders, filters, etc).
 
 ## Killer Autohook
 - Hooks a carried survivor when possible.
