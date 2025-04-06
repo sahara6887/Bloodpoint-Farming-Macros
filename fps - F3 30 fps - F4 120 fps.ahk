@@ -78,10 +78,10 @@ isSettingsOpen() {
     ; ']' of ESC: (295, 1350)
     matchDetailsE := getColor(1999, 100)
 
-    ; Black background of back button to disquality all bright images
-    backBlack := getColor(200, 1370)
+    ; Red arrow `<` of back button to add further specificity
+    backRed := getColor(133, 1350)
 
-    return isWhiteish(matchDetailsE) && isBlackish(backBlack)
+    return isWhiteish(matchDetailsE) && isRedish(backRed)
 }
 
 selectGraphicsTab() {
@@ -148,8 +148,38 @@ isWhiteish(color) {
     return isBrightish
 }
 
-isBlackish(color) {
-    return (color & 0xF0F0F0) == 0
+isRedish(color) {
+    b := ((color >> 16) & 0xFF) / 255.0
+    g := ((color >> 8) & 0xFF) / 255.0
+    r := (color & 0xFF) / 255.0
+
+    max := r, min := r
+    if (g > max)
+        max := g
+    if (b > max)
+        max := b
+    if (g < min)
+        min := g
+    if (b < min)
+        min := b
+
+    delta := max - min
+
+    if (delta = 0) {
+        return false  ; grayscale (no hue)
+    } else if (max = r) {
+        hue := 60 * Mod(((g - b) / delta), 6)
+    } else if (max = g) {
+        hue := 60 * (((b - r) / delta) + 2)
+    } else {
+        hue := 60 * (((r - g) / delta) + 4)
+    }
+
+    if (hue < 0)
+        hue += 360
+
+    ; Reddish hue range: 0–20 or 340–360
+    return (hue <= 20 || hue >= 340)
 }
 
 getColor(x, y) {
@@ -183,7 +213,7 @@ log(msg) {
 
 info(msg) {
     ; Uncomment while developing:
-    ; OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
+    OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
 }
 
 doNothing() {
