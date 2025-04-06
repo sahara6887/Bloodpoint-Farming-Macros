@@ -213,7 +213,7 @@ log(msg) {
 
 info(msg) {
     ; Uncomment while developing:
-    OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
+    ; OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
 }
 
 doNothing() {
