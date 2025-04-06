@@ -31,7 +31,7 @@ return
 ClickThroughScreens:
 {
     color := getColor(238, 1351) ; [ESC] main menu white pixel
-    if (color = 0xFFFFFF || (A_TickCount - StartTime > 90000))
+    if ((color | 0x030303) = 0xFFFFFF || (A_TickCount - StartTime > 90000))
     {
         ; Finished/Loaded
         SetTimer, ClickThroughScreens, Off
