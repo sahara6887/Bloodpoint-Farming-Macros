@@ -41,7 +41,7 @@ ClickThroughScreens:
         SetTimer, clearToolTip, 2000
     } else {
         ; Not loaded/keep clicking...
-        statusUpdate("Clicking through startup screens (" . elapsedSeconds() . " sec)...")
+        ; statusUpdate("Clicking through startup screens (" . elapsedSeconds() . " sec)...")
         ControlClick,, DeadByDaylight
     }
 }
