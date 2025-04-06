@@ -31,13 +31,12 @@ selectFpsOption(x, y) {
     detectDbdWindowScale()
     openGraphicsSettings()
 
-    ; 30 FPS option
     scaledClick(x, y)
 
     closeSettings()
 
     settingFpsTookMs := A_TickCount - start
-    log("Setting FPS took " . settingFpsTookMs . " ms")
+    info("Setting FPS took " . settingFpsTookMs . " ms")
 }
 
 ; All pixel coordinates are relative to Snoggles 1440p monitor.
@@ -61,16 +60,13 @@ openGraphicsSettings() {
     ; Sometimes the game lags with black screen when opening menu first time.
     ; Wait for the screen to open.
     ; Note that the [ ESC ] (295, 1350) button looks pure white, but is slightly off white!
-    doWithRetriesUntil("doNothing", "isSettingsOpen")
+    doWithRetriesUntil(Func("doNothing"), Func("isSettingsOpen"))
 
     ; Select "Graphics" tab
-    doWithRetriesUntil("selectGraphicsTab", "isGraphicsTabSelected")
+    doWithRetriesUntil(Func("selectGraphicsTab"), Func("isGraphicsTabSelected"))
 
     ; Open FPS dropdown
-    scaledClick(1350, 938)
-    ; The text strokes of the FPS options are thin. Hard to find a pure white pixel.
-    ; We'll just sleep here instead of pixel matching since this menu seems performant enough.
-    Sleep, 50
+    doWithRetriesUntil(Func("openFpsMenu"), Func("isFpsMenuOpen"))
 }
 
 closeSettings() {
@@ -80,12 +76,12 @@ closeSettings() {
 isSettingsOpen() {
     ; 'E' of MATCH DETAILS (1999, 100)
     ; ']' of ESC: (295, 1350)
-    color := getColor(1999, 100)
+    matchDetailsE := getColor(1999, 100)
 
-    ; The pixel starts off-white and eventually becomes full white.
-    ; We only care if each RGB component is > 0xF8, so we'll mask the low bits
-    maskedColor := color | 0x070707
-    return maskedColor = 0xFFFFFF
+    ; Black background of back button to disquality all bright images
+    backBlack := getColor(200, 1370)
+
+    return isWhiteish(matchDetailsE) && isBlackish(backBlack)
 }
 
 selectGraphicsTab() {
@@ -94,28 +90,64 @@ selectGraphicsTab() {
 
 isGraphicsTabSelected() {
     ; 'R' of 'GRAPHICS': (950, 100)
-    return (getColor(950, 100) | 0x030303) = 0xFFFFFF
+    return isWhiteish(getColor(950, 100))
 }
 
-doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
+openFpsMenu() {
+    ; Center of FPS option
+    scaledClick(1350, 938)
+}
+
+isFpsMenuOpen() {
+    ; Check for the base of the 2 of the 120: (1771, 1100)
+    return isWhiteish(getColor(1771, 1100))
+}
+
+doWithRetriesUntil(action, predicate, maxDurationMs := 500) {
     startTime := A_TickCount  ; Get the current time (in milliseconds)
-    action := Func(actionName)
-    predicate := Func(predicateName)
 
     while (A_TickCount - startTime < maxDurationMs) {
-        action.call()
-        result := predicate.call()
-        if (result) {
-            duration := A_TickCount - startTime
-            log(predicateName . " took " . duration . " ms.")
-            return
+        action.Call()
+
+        ; Check several times before repeating the action.
+        ; Checking instantly isn't enough time, but the action is often slow,
+        ; so we don't want to repeat the action if we don't need to.
+        Loop, 5 {
+            if (predicate.Call()) {
+                duration := A_TickCount - startTime
+                log(predicate.Name . " took " . duration . " ms.")
+                return
+            }
+            Sleep, 10
         }
-        Sleep, 25
     }
 
     log("Failed waiting for " . predicate.Name . " after " . maxDurationMs . " ms.")
 
     Exit
+}
+
+isWhiteish(color) {
+    ; Some pixels starts off-white and eventually becomes full white.
+    ; We only care if each RGB component is > 0xF8, so we'll mask the low bits
+    ; Most reshade filters leave near-pure-white pixels as near-pure-white.
+    ; isWhiteish := (color | 0x070707) = 0xFFFFFF
+
+    ; isBrightish is a less specific alternative for users with reshade filters that transform white pixels to:
+    ; - non-white, e.g. tint
+    ; - non-stable values that change based on surrounding pixels (fog removal, bloom, etc.)
+    ; Setting to isBrightish may result in false positives.
+    b := (color >> 16) & 0xFF
+    g := (color >> 8) & 0xFF
+    r := color & 0xFF
+    thres := 0xD0
+    isBrightish := r > thres && g > thres && b > thres
+
+    return isBrightish
+}
+
+isBlackish(color) {
+    return (color & 0xF0F0F0) == 0
 }
 
 getColor(x, y) {
@@ -143,6 +175,11 @@ scaledClick(x, y) {
 }
 
 log(msg) {
+    ; Uncomment while developing:
+    ; OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
+}
+
+info(msg) {
     ; Uncomment while developing:
     ; OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
 }
