@@ -31,13 +31,12 @@ selectFpsOption(x, y) {
     detectDbdWindowScale()
     openGraphicsSettings()
 
-    ; 30 FPS option
     scaledClick(x, y)
 
     closeSettings()
 
     settingFpsTookMs := A_TickCount - start
-    log("Setting FPS took " . settingFpsTookMs . " ms")
+    info("Setting FPS took " . settingFpsTookMs . " ms")
 }
 
 ; All pixel coordinates are relative to Snoggles 1440p monitor.
@@ -67,10 +66,7 @@ openGraphicsSettings() {
     doWithRetriesUntil("selectGraphicsTab", "isGraphicsTabSelected")
 
     ; Open FPS dropdown
-    scaledClick(1350, 938)
-    ; The text strokes of the FPS options are thin. Hard to find a pure white pixel.
-    ; We'll just sleep here instead of pixel matching since this menu seems performant enough.
-    Sleep, 50
+    doWithRetriesUntil("openFpsMenu", "isFpsMenuOpen")
 }
 
 closeSettings() {
@@ -80,12 +76,12 @@ closeSettings() {
 isSettingsOpen() {
     ; 'E' of MATCH DETAILS (1999, 100)
     ; ']' of ESC: (295, 1350)
-    color := getColor(1999, 100)
+    matchDetailsE := getColor(1999, 100)
 
-    ; The pixel starts off-white and eventually becomes full white.
-    ; We only care if each RGB component is > 0xF8, so we'll mask the low bits
-    maskedColor := color | 0x070707
-    return maskedColor = 0xFFFFFF
+    ; Red arrow `<` of back button to add further specificity
+    backRed := getColor(133, 1350)
+
+    return isWhiteish(matchDetailsE) && isRedish(backRed)
 }
 
 selectGraphicsTab() {
@@ -94,7 +90,17 @@ selectGraphicsTab() {
 
 isGraphicsTabSelected() {
     ; 'R' of 'GRAPHICS': (950, 100)
-    return (getColor(950, 100) | 0x030303) = 0xFFFFFF
+    return isWhiteish(getColor(950, 100))
+}
+
+openFpsMenu() {
+    ; Center of FPS option
+    scaledClick(1350, 938)
+}
+
+isFpsMenuOpen() {
+    ; Check for the base of the 2 of the 120: (1771, 1100)
+    return isWhiteish(getColor(1771, 1100))
 }
 
 doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
@@ -103,19 +109,77 @@ doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
     predicate := Func(predicateName)
 
     while (A_TickCount - startTime < maxDurationMs) {
-        action.call()
-        result := predicate.call()
-        if (result) {
-            duration := A_TickCount - startTime
-            log(predicateName . " took " . duration . " ms.")
-            return
+        action.Call()
+
+        ; Check several times before repeating the action.
+        ; Checking instantly isn't enough time, but the action is often slow,
+        ; so we don't want to repeat the action if we don't need to.
+        Loop, 5 {
+            if (predicate.Call()) {
+                duration := A_TickCount - startTime
+                log(predicate.Name . " took " . duration . " ms.")
+                return
+            }
+            Sleep, 10
         }
-        Sleep, 25
     }
 
     log("Failed waiting for " . predicate.Name . " after " . maxDurationMs . " ms.")
 
     Exit
+}
+
+isWhiteish(color) {
+    ; Some pixels starts off-white and eventually becomes full white.
+    ; We only care if each RGB component is > 0xF8, so we'll mask the low bits
+    ; Most reshade filters leave near-pure-white pixels as near-pure-white.
+    ; isWhiteish := (color | 0x070707) = 0xFFFFFF
+
+    ; isBrightish is a less specific alternative for users with reshade filters that transform white pixels to:
+    ; - non-white, e.g. tint
+    ; - non-stable values that change based on surrounding pixels (fog removal, bloom, etc.)
+    ; Setting to isBrightish may result in false positives.
+    b := (color >> 16) & 0xFF
+    g := (color >> 8) & 0xFF
+    r := color & 0xFF
+    thres := 0xD0
+    isBrightish := r > thres && g > thres && b > thres
+
+    return isBrightish
+}
+
+isRedish(color) {
+    b := ((color >> 16) & 0xFF) / 255.0
+    g := ((color >> 8) & 0xFF) / 255.0
+    r := (color & 0xFF) / 255.0
+
+    max := r, min := r
+    if (g > max)
+        max := g
+    if (b > max)
+        max := b
+    if (g < min)
+        min := g
+    if (b < min)
+        min := b
+
+    delta := max - min
+
+    if (delta = 0) {
+        return false  ; grayscale (no hue)
+    } else if (max = r) {
+        hue := 60 * Mod(((g - b) / delta), 6)
+    } else if (max = g) {
+        hue := 60 * (((b - r) / delta) + 2)
+    } else {
+        hue := 60 * (((r - g) / delta) + 4)
+    }
+
+    if (hue < 0)
+        hue += 360
+
+    ; Reddish hue range: 0–20 or 340–360
+    return (hue <= 20 || hue >= 340)
 }
 
 getColor(x, y) {
@@ -143,6 +207,11 @@ scaledClick(x, y) {
 }
 
 log(msg) {
+    ; Uncomment while developing:
+    ; OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
+}
+
+info(msg) {
     ; Uncomment while developing:
     ; OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
 }
