@@ -60,13 +60,13 @@ openGraphicsSettings() {
     ; Sometimes the game lags with black screen when opening menu first time.
     ; Wait for the screen to open.
     ; Note that the [ ESC ] (295, 1350) button looks pure white, but is slightly off white!
-    doWithRetriesUntil(Func("doNothing"), Func("isSettingsOpen"))
+    doWithRetriesUntil("doNothing", "isSettingsOpen")
 
     ; Select "Graphics" tab
-    doWithRetriesUntil(Func("selectGraphicsTab"), Func("isGraphicsTabSelected"))
+    doWithRetriesUntil("selectGraphicsTab", "isGraphicsTabSelected")
 
     ; Open FPS dropdown
-    doWithRetriesUntil(Func("openFpsMenu"), Func("isFpsMenuOpen"))
+    doWithRetriesUntil("openFpsMenu", "isFpsMenuOpen")
 }
 
 closeSettings() {
@@ -103,8 +103,10 @@ isFpsMenuOpen() {
     return isWhiteish(getColor(1771, 1100))
 }
 
-doWithRetriesUntil(action, predicate, maxDurationMs := 500) {
+doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
     startTime := A_TickCount  ; Get the current time (in milliseconds)
+    action := Func(actionName)
+    predicate := Func(predicateName)
 
     while (A_TickCount - startTime < maxDurationMs) {
         action.Call()
