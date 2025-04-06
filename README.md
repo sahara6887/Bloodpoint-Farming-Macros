@@ -8,6 +8,12 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - All .ahk files require [Auto Hotkey v1.1](https://www.autohotkey.com/download/ahk-install.exe).
 - You can easily edit each macro to customize them for non-standard configurations using notepad or ChatGPT.
 
+## Skip Startup Screens
+- Auto-clicks through the DBD startup screens.
+- Times DBD startup.
+- DBD must be fullscreen and visible.
+- DBD does *not* need to be focused.
+
 ## Auto Click
 - Auto-clicker for spending bloodpoints.
 - F6 = Toggle ON / F7 = Toggle OFF
