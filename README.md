@@ -19,8 +19,9 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - F6 = Toggle ON / F7 = Toggle OFF
 
 ## Killer Shuffle
-- Killer will repeatedly move forwards and backwards to allow survivors to easily get in chase (Spin blinding, Gen dancing, etc).
-- F8 = Toggle ON / F9 = Toggle OFF
+- Killer will repeatedly move forwards and backwards in place to allow survivors to get into chase (Spin blinding, Gen dancing, etc.).
+- F8 = start dancing
+- WASD = stop dancing
 
 ## FPS Switch
 - Very quickly switches between 30 & 120 FPS.

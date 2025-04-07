@@ -1,34 +1,80 @@
-﻿#SingleInstance Force
-#IfWinActive DeadByDaylight
+﻿#Persistent
+#SingleInstance Force
 
-clickHoldTime := 50 ; in milliseconds
+; Dances forward and backwards in place, maintaining chase with survivors.
+; Stops automatically if DBD loses focus or any of WASD are pressed.
 
-IsEnabled := false
+global IsEnabled, IsWDown, IsSDown
 
-; Stop the clicking
-~F9::
-  IsEnabled := false
-Return
-
-; Start the clicking
+; Start dancing
+#IfWinActive, DeadByDaylight
 ~F8::
-  IsEnabled := true
+    IsEnabled := true
+    Loop
+    {
+        If (!IsEnabled)
+            Break
 
-  ; Loop to simulate holding and clicking at desired speed
-  outer:
-  Loop
-  {
-      If (!IsEnabled)
-        Break outer
+        holdKey("w", 70, IsWDown)
 
-      SendInput, % "{w down}"
-      Sleep, 70  ; Hold the key down
-      SendInput, % "{w up}"
+        Sleep, 50
 
-      Sleep, 100
-
-      SendInput, % "{s down}"
-      Sleep, 50  ; Hold the key down
-      SendInput, % "{s up}"
-  }
+        holdKey("s", 50, IsSDown)
+    }
 Return
+
+holdKey(key, holdTime, ByRef isKeyDown) {
+    ; If DBD loses focus, stop. Don't spam "wswsws" to other windows.
+    WinGetTitle, title, A
+    if (Trim(title) != "DeadByDaylight") {
+        disable()
+        return
+    }
+    If (!IsEnabled)
+        return
+
+    ; Send the key down event
+    SendInput, % "{" key " down}"
+    isKeyDown := true
+    Sleep, holdTime  ; Hold the key down for the specified time
+
+    If (!IsEnabled)
+        return
+    ; Reset key state and send key up event
+    isKeyDown := false
+    SendInput, % "{" key " up}"
+}
+
+; WASD key down handlers with pass-through
+; WS need special handling.
+; For example, we do not want to send W up if the user starts holding W.
+~w::
+disable()
+resetS()
+return
+~s::
+disable()
+resetW()
+return
+~a::
+~d::
+disable()
+resetW()
+resetS()
+return
+
+resetW() {
+    if (IsWDown) {
+        SendInput, % "{w up}"
+        IsWDown := false
+    }
+}
+resetS() {
+    if (IsSDown) {
+        SendInput, % "{s up}"
+        IsSDown := false
+    }
+}
+disable() {
+    IsEnabled := false
+}
