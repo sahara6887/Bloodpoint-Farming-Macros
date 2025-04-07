@@ -1,6 +1,9 @@
 ﻿#Persistent
 #SingleInstance Force
 
+if (FileExist("icons/shuffle.ico"))
+    Menu, Tray, Icon, icons/shuffle.ico
+
 ; Dances forward and backwards in place, maintaining chase with survivors.
 ; Stops automatically if DBD loses focus or any of WASD are pressed.
 
