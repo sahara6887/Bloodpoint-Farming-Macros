@@ -10,60 +10,59 @@ global IsEnabled, IsWDown, IsSDown
 #IfWinActive, DeadByDaylight
 ~F8::
     IsEnabled := true
-
     Loop
     {
-        ; Step Forward
-        disableIfUnfocused()
         If (!IsEnabled)
             Break
-        SendInput, % "{w down}"
-        IsWDown := true
-        Sleep, 70  ; Hold the key down
-        If (!IsEnabled)
-            Break
-        IsWDown := false
-        If (!IsEnabled)
-            Break
-        SendInput, % "{w up}"
+
+        holdKey("w", 70, IsWDown)
 
         Sleep, 50
 
-        ; Step Back
-        disableIfUnfocused()
-        If (!IsEnabled)
-            Break
-        SendInput, % "{s down}"
-        IsSDown := true
-        Sleep, 50  ; Hold the key down
-        If (!IsEnabled)
-            Break
-        IsSDown := false
-        SendInput, % "{s up}"
+        holdKey("s", 50, IsSDown)
     }
 Return
+
+holdKey(key, holdTime, ByRef isKeyDown) {
+    ; If DBD loses focus, stop. Don't spam "wswsws" to other windows.
+    WinGetTitle, title, A
+    if (Trim(title) != "DeadByDaylight") {
+        disable()
+        return
+    }
+    If (!IsEnabled)
+        return
+
+    ; Send the key down event
+    SendInput, % "{" key " down}"
+    isKeyDown := true
+    Sleep, holdTime  ; Hold the key down for the specified time
+
+    If (!IsEnabled)
+        return
+    ; Reset key state and send key up event
+    isKeyDown := false
+    SendInput, % "{" key " up}"
+}
 
 ; WASD key down handlers with pass-through
 ; WS need special handling.
 ; For example, we do not want to send W up if the user starts holding W.
 ~w::
-resetS()
 disable()
+resetS()
 return
 ~s::
-resetW()
 disable()
+resetW()
 return
 ~a::
 ~d::
-resetAndDisable()
+disable()
+resetW()
+resetS()
 return
 
-resetAndDisable() {
-   resetW()
-   resetS()
-   disable()
-}
 resetW() {
     if (IsWDown) {
         SendInput, % "{w up}"
@@ -78,10 +77,4 @@ resetS() {
 }
 disable() {
     IsEnabled := false
-}
-
-disableIfUnfocused() {
-    WinGetTitle, title, A
-    if (Trim(title) != "DeadByDaylight")
-        disable()
 }
