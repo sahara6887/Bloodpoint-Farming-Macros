@@ -1,11 +1,12 @@
 ﻿#SingleInstance Force
 #Persistent
 #IfWinActive DeadByDaylight
-WinGetPos, ignoredX, ignoredY, DbdWidth, DbdHeight, DeadByDaylight
 
-; Scaling factor for monitors at resolutions other than 2560x1440
-xScale := DbdWidth / 2560
-yScale := DbdHeight / 1440
+; This macro much is slower than the default one,
+; but does not depend on pixels being a specific color.
+; This makes it much more likely to work with bizarre reshade filters.
+
+global xScale, yScale
 
 CoordMode, Pixel, Window
 
@@ -14,26 +15,33 @@ SetMouseDelay, -1 ; Make cursor move instantly rather than mimicking user behavi
 ; Set 30 FPS (Ctrl-)
 F3::
 {
-    openGraphicsSettings()
-
     ; 30 FPS option
-    scaledClick(1760, 778)
-
-    closeSettings()
+    selectFpsOption(1760, 778)
 }
 return
 
 ; Set 120 FPS (Ctrl+)
 F4::
 {
-    openGraphicsSettings()
-
     ; 120 FPS option
-    scaledClick(1778, 1084)
-
-    closeSettings()
+    selectFpsOption(1778, 1084)
 }
 return
+
+; Selects an option from the FPS dropdown at the specified pixel coordinates
+; relative to a 1440p resolution. These will be scaled for non-1440p resolutions.
+selectFpsOption(x, y) {
+    start := A_TickCount
+
+    detectDbdWindowScale()
+    openGraphicsSettings()
+
+    scaledClick(x, y)
+
+    closeSettings()
+
+    global settingFpsTookMs := A_TickCount - start
+}
 
 openGraphicsSettings() {
     ; Open Settings
@@ -41,19 +49,14 @@ openGraphicsSettings() {
 
     ; Sometimes the game lags with black screen when opening menu first time.
     ; Wait for the screen to open.
-    ; Note that the [ ESC ] button looks pure white, but is slightly off white!
-    ; waitUntilColor(1999, 100, 0xFFFFFF) ; 'E' of MATCH DETAILS
     Sleep, 300
 
     ; Select "Graphics" tab
     scaledClick(988, 94)
-    ; waitUntilColor(950, 100, 0xFFFFFF) ; 'R' of 'GRAPHICS'
     Sleep, 50
 
     ; Open FPS dropdown
     scaledClick(1350, 938)
-    ; The text strokes of the FPS options are thin. Hard to find a pure white pixel.
-    ; We'll just sleep here instead of pixel matching since this menu seems performant enough.
     Sleep, 50
 }
 
@@ -61,31 +64,21 @@ closeSettings() {
     Send, {ESC}
 }
 
-waitUntilColor(x, y, expectedColor) {
-    global xScale, yScale
-    scaledX := Round(x * xScale)
-    scaledY := Round(y * yScale)
-
-    ; ToolTip ; Uncomment for debugging
-    ; Looping 200 times is roughly 2 seconds on my PC -- long enough.
-    Sleep, 200
-    Loop, 200
-    {
-        PixelGetColor, color, scaledX, scaledY
-        if (color = expectedColor)
-        {
-            return
-        }
-    }
-    ; ToolTip, (%x% %y%) * %xScale% = ( %scaledX%  %scaledY% ) %color% != %expectedColor% ; Uncomment for debugging
-    Exit
-}
-
 scaledClick(x, y) {
-    global xScale, yScale
-
     scaledX := Round(x * xScale)
     scaledY := Round(y * yScale)
 
     Click, %scaledX%, %scaledY%
+}
+
+; All pixel coordinates are relative to a 1440p monitor.
+; Detect a scaling factor for other resolutions such as 1080p.
+; This should be tested every time in case the resolution changes.
+; Runtime of this function was measured at 0 ms, so it's effectively free.
+detectDbdWindowScale() {
+    WinGetPos, ignoredX, ignoredY, DbdWidth, DbdHeight, DeadByDaylight
+
+    ; Scaling factor for monitors at resolutions other than 2560x1440
+    xScale := DbdWidth / 2560
+    yScale := DbdHeight / 1440
 }

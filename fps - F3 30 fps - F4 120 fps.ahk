@@ -5,6 +5,7 @@
 CoordMode, Pixel, Window
 
 SetMouseDelay, -1 ; Make cursor move instantly rather than mimicking user behavior
+global xScale, yScale, lastCheckedColor
 
 ; Set 30 FPS
 F3::
@@ -39,13 +40,11 @@ selectFpsOption(x, y) {
     info("Setting FPS took " . settingFpsTookMs . " ms")
 }
 
-; All pixel coordinates are relative to Snoggles 1440p monitor.
+; All pixel coordinates are relative to a 1440p monitor.
 ; Detect a scaling factor for other resolutions such as 1080p.
 ; This should be tested every time in case the resolution changes.
 ; Runtime of this function was measured at 0 ms, so it's effectively free.
 detectDbdWindowScale() {
-    global xScale, yScale
-
     WinGetPos, ignoredX, ignoredY, DbdWidth, DbdHeight, DeadByDaylight
 
     ; Scaling factor for monitors at resolutions other than 2560x1440
@@ -76,12 +75,12 @@ closeSettings() {
 isSettingsOpen() {
     ; 'E' of MATCH DETAILS (1999, 100)
     ; ']' of ESC: (295, 1350)
-    matchDetailsE := getColor(1999, 100)
+    global colorMatchDetailsE := getColor(1999, 100)
 
     ; Red arrow `<` of back button to add further specificity
-    backRed := getColor(133, 1350)
+    global colorBackRed := getColor(133, 1350)
 
-    return isWhiteish(matchDetailsE) && isRedish(backRed)
+    return isWhiteish(colorMatchDetailsE) && isRedish(colorBackRed)
 }
 
 selectGraphicsTab() {
@@ -90,7 +89,8 @@ selectGraphicsTab() {
 
 isGraphicsTabSelected() {
     ; 'R' of 'GRAPHICS': (950, 100)
-    return isWhiteish(getColor(950, 100))
+    global colorGraphicsR := getColor(950, 100)
+    return isWhiteish(colorGraphicsR)
 }
 
 openFpsMenu() {
@@ -100,7 +100,8 @@ openFpsMenu() {
 
 isFpsMenuOpen() {
     ; Check for the base of the 2 of the 120: (1771, 1100)
-    return isWhiteish(getColor(1771, 1100))
+    global colorFps120 := getColor(1771, 1100)
+    return isWhiteish(colorFps120)
 }
 
 doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
@@ -183,21 +184,18 @@ isRedish(color) {
 }
 
 getColor(x, y) {
-    global xScale, yScale, lastCheckedColor
     scaledX := Round(x * xScale)
     scaledY := Round(y * yScale)
 
-    PixelGetColor, lastCheckedColor, scaledX, scaledY
+    PixelGetColor, color, scaledX, scaledY
 
-    log("get color at (" . scaledX . ", " . scaledY . ") color=" . lastCheckedColor)
-    return lastCheckedColor
+    log("get color at (" . scaledX . ", " . scaledY . ") color=" . color)
+    return color
 }
 
 ; Click on the scaled coords.
 ; Prevent mouse movement from the user which may cause the click to miss
 scaledClick(x, y) {
-    global xScale, yScale
-
     scaledX := Round(x * xScale)
     scaledY := Round(y * yScale)
 
