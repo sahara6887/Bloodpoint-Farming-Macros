@@ -6,6 +6,9 @@
 ; Set showToolTip to false if you don't want tooltip status reports.
 global showToolTip := true
 
+if (FileExist("icons/dbd-logo.ico"))
+    Menu, Tray, Icon, icons/dbd-logo.ico
+
 SetTitleMatchMode, 1 ; Exact title match
 CoordMode, Pixel, Screen
 global startTime, xScale, yScale

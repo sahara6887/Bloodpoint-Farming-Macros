@@ -1,5 +1,9 @@
 ﻿#SingleInstance Force
 #Persistent
+
+if (FileExist("icons/hook.ico"))
+    Menu, Tray, Icon, icons/hook.ico
+
 ; This macro hooks a carried survivor whenever possible,
 ; adding years of life to your keyboard's spacebar.
 

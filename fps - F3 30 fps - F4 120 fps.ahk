@@ -1,7 +1,8 @@
 ﻿#SingleInstance Force
 #Persistent
 #IfWinActive DeadByDaylight
-
+if (FileExist("icons/fps-120.ico"))
+    Menu, Tray, Icon, icons/fps-120.ico
 CoordMode, Pixel, Window
 
 SetMouseDelay, -1 ; Make cursor move instantly rather than mimicking user behavior
@@ -11,6 +12,8 @@ global xScale, yScale, lastCheckedColor
 F3::
 {
     ; 30 FPS option
+    if (FileExist("icons/fps-30.ico"))
+        Menu, Tray, Icon, icons/fps-30.ico
     selectFpsOption(1760, 778)
 }
 return
@@ -19,6 +22,8 @@ return
 F4::
 {
     ; 120 FPS option
+    if (FileExist("icons/fps-120.ico"))
+        Menu, Tray, Icon, icons/fps-120.ico
     selectFpsOption(1778, 1084)
 }
 return
