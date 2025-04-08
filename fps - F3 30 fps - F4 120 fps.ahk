@@ -1,4 +1,5 @@
 ﻿#SingleInstance Force
+#NoEnv
 #Persistent
 #IfWinActive DeadByDaylight
 if (FileExist("icons/fps-120.ico"))

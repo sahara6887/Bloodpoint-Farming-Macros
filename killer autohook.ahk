@@ -1,4 +1,5 @@
 ﻿#SingleInstance Force
+#NoEnv
 #Persistent
 
 if (FileExist("icons/hook.ico"))

@@ -1,4 +1,5 @@
 ﻿#Persistent
+#NoEnv
 #SingleInstance Force
 ; Skips DBD startup screens until the [ESC] text on main menu is visible.
 ; DBD must be fullscreen and visible

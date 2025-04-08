@@ -1,4 +1,5 @@
 ﻿#Persistent
+#NoEnv
 #SingleInstance Force
 #NoEnv
 

@@ -1,4 +1,5 @@
 ﻿#SingleInstance Force
+#NoEnv
 #IfWinActive DeadByDaylight
 if (FileExist("icons/autopurchase.ico"))
     Menu, Tray, Icon, icons/autopurchase.ico
