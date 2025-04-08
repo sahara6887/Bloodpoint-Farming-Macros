@@ -37,3 +37,8 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - Hooks a carried survivor when possible.
 - Adds years of life to your keyboard's spacebar.
 - UI scale must be 100%
+
+## Hit Counter
+- Press Ctrl+r to show a counter for the number of times you M1.
+- Useful for killers to track the number of self-care hit rotations in Reactive builds.
+- Disappears after 10 seconds of no hits.
