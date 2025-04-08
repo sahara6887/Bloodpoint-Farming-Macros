@@ -1,5 +1,8 @@
 ﻿#Persistent
 #SingleInstance Force
+#NoEnv
+
+SetBatchLines, -1 ; Remove the built-in sleeps to get more consistent timing maybe
 
 if (FileExist("icons/shuffle.ico"))
     Menu, Tray, Icon, icons/shuffle.ico
@@ -18,10 +21,7 @@ global IsEnabled, IsWDown, IsSDown
         If (!IsEnabled)
             Break
 
-        holdKey("w", 70, IsWDown)
-
-        Sleep, 50
-
+        holdKey("w", 50, IsWDown)
         holdKey("s", 50, IsSDown)
     }
 Return
