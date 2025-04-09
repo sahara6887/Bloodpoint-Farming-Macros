@@ -7,7 +7,7 @@
 ;
 ; Hides the counter if there are no M1s for the specified duration.
 ; Usually this means that the rective portion is done.
-global HideTimerAfterNoHitsForMs := 10000
+global HideTimerAfterNoHitsForMs := 20000
 
 SetBatchLines, -1
 SendMode Input
