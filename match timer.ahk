@@ -14,6 +14,9 @@ screenWidth := A_ScreenWidth
 screenHeight := A_ScreenHeight
 barHeight := Round(screenHeight * 0.055)  ; ~5.5% of screen
 
+if (FileExist("icons/stopwatch.ico"))
+    Menu, Tray, Icon, icons/stopwatch.ico
+
 ; GUI Setup
 Gui, +AlwaysOnTop -Caption +ToolWindow
 Gui, Color, 1E1E1E
