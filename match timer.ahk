@@ -8,7 +8,7 @@ CoordMode, ToolTip, Screen
 
 startTime := 0
 running := false
-barsWerePresent := false
+isLetterboxVisible := false
 
 screenWidth := A_ScreenWidth
 screenHeight := A_ScreenHeight
@@ -32,34 +32,52 @@ Return
 
 CheckMatchStart:
 {
-    PixelGetColor, topBarColor, % screenWidth // 2, % barHeight // 2, RGB
-    PixelGetColor, bottomBarColor, % screenWidth // 2, % (screenHeight - barHeight // 2), RGB
+    blackTop := true
+    blackBottom := true
+    sampleCount := 5
 
-    centerX := screenWidth // 2
+    ; Sample multiple evenly spaced pixels from top and bottom bars
+    Loop, %sampleCount%
+    {
+        x := Round(screenWidth * (A_Index / (sampleCount + 1)))
+
+        PixelGetColor, topColor, %x%, % (barHeight // 2), RGB
+        PixelGetColor, bottomColor, %x%, % (screenHeight - barHeight // 2), RGB
+
+        if (topColor != 0x000000)
+            blackTop := false
+        if (bottomColor != 0x000000)
+            blackBottom := false
+    }
+
+    ; Sample mid-left and mid-right to rule out the pure black screen scenario, e.g. loading screen
     centerY := screenHeight // 2
-    PixelGetColor, centerColor, %centerX%, %centerY%, RGB
-
     PixelGetColor, leftCenterColor, 0, %centerY%, RGB
     PixelGetColor, rightCenterColor, % (screenWidth - 1), %centerY%, RGB
 
-    if (!barsWerePresent
-        && topBarColor = 0x000000
-        && bottomBarColor = 0x000000
-        && centerColor != 0x000000
-        && (leftCenterColor != 0x000000 || rightCenterColor != 0x000000)) {
+    centerIsBlack := leftCenterColor = 0x000000 && rightCenterColor = 0x000000
 
-        barsWerePresent := true
+    if (!isLetterboxVisible
+        && blackTop
+        && blackBottom
+        && !centerIsBlack) {
+
+        ; Letterbox detected. Record it and prepare for them to be removed.
+        isLetterboxVisible := true
+        letterBoxFirstSighted := A_TickCount
         Return
     }
 
-    if (barsWerePresent
-        && topBarColor != 0x000000
-        && bottomBarColor != 0x000000
-        && centerColor != 0x000000) {
+    if (isLetterboxVisible
+        && !blackTop
+        && !blackBottom
+        && !centerIsBlack) {
 
+        ; Letterbox just disappeared. Start the match.
         startTime := A_TickCount
         running := true
-        barsWerePresent := false
+
+        isLetterboxVisible := false
     }
 }
 Return
