@@ -42,3 +42,8 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - Press Ctrl+r to show a counter for the number of times you M1.
 - Useful for killers to track the number of self-care hit rotations in Reactive builds.
 - Disappears after 10 seconds of no hits.
+
+## Match Timer
+- A simple match timer that resets when the black bars at the top/bottom of the screen fully disappear.
+- Window is always on top and draggable.
+![Match Timer and taskbar icons](assets/match-timer.png)
