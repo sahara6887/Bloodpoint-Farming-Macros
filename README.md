@@ -20,7 +20,7 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 
 ## Killer Shuffle
 - Killer will repeatedly move forwards and backwards in place to allow survivors to get into chase (Spin blinding, Gen dancing, etc.).
-- F8 = start dancing
+- F2 = start dancing
 - WASD = stop dancing
 
 ## FPS Switch
@@ -47,3 +47,6 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - A simple match timer that resets when the black bars at the top/bottom of the screen fully disappear.
 - Window is always on top and draggable.
 ![Match Timer and taskbar icons](assets/match-timer.png)
+
+## Abandon Match
+- Uses the Abandon Match feature as soon as available.
