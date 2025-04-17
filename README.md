@@ -43,5 +43,10 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - Useful for killers to track the number of self-care hit rotations in Reactive builds.
 - Disappears after 10 seconds of no hits.
 
+## Match Timer
+- A simple match timer that resets when the black bars at the top/bottom of the screen fully disappear.
+- Window is always on top and draggable.
+![Match Timer and taskbar icons](assets/match-timer.png)
+
 ## Abandon Match
 - Uses the Abandon Match feature as soon as available.
