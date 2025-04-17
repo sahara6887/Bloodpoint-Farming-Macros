@@ -15,7 +15,7 @@ global IsEnabled, IsWDown, IsSDown
 
 ; Start dancing
 #IfWinActive, DeadByDaylight
-~F8::
+~F2::
     IsEnabled := true
     Loop
     {
