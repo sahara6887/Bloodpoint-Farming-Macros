@@ -44,11 +44,21 @@ abandonMatch() {
 }
 
 isEscapeAbandonOptionVisible() {
-    ; Step 1: The [ESC] Abandon option appears in the top right.
-    global escWhiteE := getColor(2178, 73)
-    global escWhiteC := getColor(2200, 73)
-    global escBlackBg := getColor(2205, 73) ; center of the C
-    return escWhiteE = 0xFFFFFF and escWhiteC = 0xFFFFFF and escBlackBg = 0
+    ; Samples the [ESC] ABANDON button background in the top right
+    ; in a spot that's common across keyboard (ESC), PS5 (OPTIONS)
+    global escBlackBg1 := getColor(2189, 82)
+    global escBlackBg2 := getColor(2199, 82)
+    global escBlackBg3 := getColor(2188, 90)
+    global escBlackBg4 := getColor(2199, 90)
+    global escNotBlackBg1 := getColor(2169, 43)
+    global escNotBlackBg2 := getColor(2220, 43)
+    global escNotBlackBg3 := getColor(2169, 104)
+    global escNotBlackBg4 := getColor(2220, 104)
+
+    buttonIsBlack := escBlackBg1 = 0 and escBlackBg2 = 0 and escBlackBg3 = 0 and escBlackBg4 = 0
+    surroundIsNotBlack := escNotBlackBg1 != 0 and escNotBlackBg2 != 0 and escNotBlackBg3 != 0 and escNotBlackBg4 != 0
+
+    return buttonIsBlack and surroundIsNotBlack
 }
 
 clickSettingsAbandonButton() {
