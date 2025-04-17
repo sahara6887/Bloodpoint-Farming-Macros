@@ -20,7 +20,7 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 
 ## Killer Shuffle
 - Killer will repeatedly move forwards and backwards in place to allow survivors to get into chase (Spin blinding, Gen dancing, etc.).
-- F8 = start dancing
+- F2 = start dancing
 - WASD = stop dancing
 
 ## FPS Switch
