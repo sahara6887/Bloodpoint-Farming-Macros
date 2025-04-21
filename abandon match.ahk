@@ -22,6 +22,10 @@ detectDbdWindowScale()
 SetTimer, CheckForAbandon, 500
 return
 
+~^+a::
+abandonMatch()
+return
+
 CheckForAbandon:
 if (isEscapeAbandonOptionVisible()) {
     start := A_TickCount

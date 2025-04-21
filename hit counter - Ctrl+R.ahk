@@ -28,6 +28,15 @@ Gui, +LastFound  ; Mark this GUI as the "last found" window
 WinSet, TransColor, 0  ; set black as transparent
 return
 
+~^-::
+if (counter > 0)
+    setCounter(counter - 1)
+Return
+
+~^=::
+setCounter(counter + 1)
+Return
+
 ; Show and reset the counter
 ~^r::
     setCounter(0)
