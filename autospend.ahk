@@ -41,16 +41,7 @@ CheckPixels:
         return
     }
 
-    level := getBloodwebLevel()
-
-    if (level != prevLevel && level != expectedNextLevel()) {
-        ; Wait, really? Maybe we split reads across two frames.
-        ; Hopefully trying again fixes it.
-        Sleep, 100
-        level := getBloodwebLevel()
-    }
-
-    OutputDebug, level=%level%
+    level := reliablyGetBloodwebLevel()
 
     if (level != -1 && prevLevel != level) {
         cycleBloodweb()
@@ -58,35 +49,23 @@ CheckPixels:
         prevLevel := level
     }
 
-    ; Click autopurchase.
-    scaledClick(910, 755, "down") ; autopurchase
-    Sleep, clickHoldTime
-    scaledClick(910, 755, "up") ; autopurchase
+    clickAutoPurchase()
 
     return
 }
 
 cycleBloodweb() {
+    ; Closing and opening the bloodweb skips the "level" interstitial
     scaledClick(201, 459) ; bloodweb tab
     Sleep, 100
     scaledClick(201, 459) ; bloodweb tab
 }
 
-RGBtoHSL(r, g, b) {
-    r := r / 255.0, g := g / 255.0, b := b / 255.0
-
-    max := Max(r, g, b), min := Min(r, g, b)
-    l := (max + min) / 2
-
-    if (max = min)
-        return [0, 0, l]
-
-    d := max - min
-    s := l > 0.5 ? d / (2 - max - min) : d / (max + min)
-    h := (max = r) ? ((g - b) / d + (g < b ? 6 : 0)) :
-         (max = g) ? ((b - r) / d + 2) : ((r - g) / d + 4)
-
-    return [h / 6, s, l]
+clickAutoPurchase() {
+    ; Click autopurchase.
+    scaledClick(910, 755, "down") ; autopurchase
+    Sleep, clickHoldTime
+    scaledClick(910, 755, "up") ; autopurchase
 }
 
 expectedNextLevel() {
@@ -95,9 +74,24 @@ expectedNextLevel() {
     return prevLevel + 1
 }
 
+reliablyGetBloodwebLevel() {
+    level := getBloodwebLevel()
+
+    if (level != -1 && level != prevLevel && level != expectedNextLevel()) {
+        ; Wait, really? Maybe we split reads across two frames.
+        ; Hopefully trying again fixes it.
+        Sleep, 100
+        level := getBloodwebLevel()
+    }
+
+    OutputDebug, level=%level%
+
+    return level
+}
+
 getBloodwebLevel() {
     ; Decision-tree OCR.
-    ; Highly efficient. Questionably reliable.
+    ; Highly efficient. Zero dependencies. Questionably reliable.
     ; Returns -1 if no level is present.
     ; TODO: Probably thinks a pure white screen is a digit.
 
@@ -144,6 +138,23 @@ getColor(x, y) {
     PixelGetColor, color, scaledX, scaledY, RGB
 
     return color
+}
+
+RGBtoHSL(r, g, b) {
+    r := r / 255.0, g := g / 255.0, b := b / 255.0
+
+    max := Max(r, g, b), min := Min(r, g, b)
+    l := (max + min) / 2
+
+    if (max = min)
+        return [0, 0, l]
+
+    d := max - min
+    s := l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    h := (max = r) ? ((g - b) / d + (g < b ? 6 : 0)) :
+         (max = g) ? ((b - r) / d + 2) : ((r - g) / d + 4)
+
+    return [h / 6, s, l]
 }
 
 scaledClick(x, y, options := "") {
