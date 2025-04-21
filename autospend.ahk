@@ -14,29 +14,30 @@ if (FileExist("icons/autopurchase.ico"))
 global clickHoldTime := 50
 global prevLevel := -1
 
-; Stop the clicking
-~F7::
-  SetTimer, CheckPixels, Off
-Return
-
 ; Start the clicking
 ~F6::
-  MouseMove, 910, 755
-  SetTimer, CheckPixels, 100
+    MouseMove, 910, 755
+    ToolTip, Autospending... (wiggle mouse to disable)
+    SetTimer, CheckPixels, 100
 Return
+
+; Stop the clicking
+~F7::
+    disable()
+Return
+
+disable() {
+    ToolTip
+    SetTimer,, Off
+}
 
 CheckPixels:
 {
-    ; Stop if the user tabs out
-    if (!WinActive("DeadByDaylight")) {
-        SetTimer,, Off
-        return
-    }
-
-    ; Stop if the user moves the mouse
+    ; Stop if the user tabs out or moves the mouse
     MouseGetPos, mouseX, mouseY
-    if (mouseX != 910 || mouseY != 755) {
-        SetTimer,, Off
+    mouseMoved := mouseX != 910 || mouseY != 755
+    if (!WinActive("DeadByDaylight") || mouseMoved = true) {
+        disable()
         return
     }
 
