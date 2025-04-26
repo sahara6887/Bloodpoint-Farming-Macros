@@ -27,6 +27,10 @@ abandonMatch()
 return
 
 CheckForAbandon:
+if (!WinActive("DeadByDaylight")) {
+    return
+}
+
 if (isEscapeAbandonOptionVisible()) {
     start := A_TickCount
 
