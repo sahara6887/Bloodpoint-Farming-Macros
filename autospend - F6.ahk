@@ -19,20 +19,15 @@ global enabled := false
 ; Start spending
 ~F6::
     enabled := true
+    level := getBloodwebLevel()
+    if (level = -1) {
+        scaledClick(201, 459, options := "", force := true) ; bloodweb tab
+        Sleep, 100
+    }
+
     scaledMouseMove(910, 755)
     ToolTip, Autospending... (wiggle mouse to disable)
     SetTimer, CheckPixels, 100
-Return
-
-; Interrupt
-~F7::
-    disable()
-    Sleep, 100
-    scaledClick(201, 143, options := "", force := true) ; character tab to cancel the autospending
-    Sleep, 100
-    scaledClick(201, 459, options := "", force := true) ; bloodweb tab
-    Sleep, 100
-    scaledMouseMove(910, 755, force := true)
 Return
 
 ^+F6::
@@ -46,6 +41,19 @@ disable() {
     enabled := false
     ToolTip
     SetTimer, CheckPixels, Off
+
+    MouseGetPos, oldX, oldY
+
+    level := getBloodwebLevel()
+    if (level = 10 or level > 11) {
+        ; Interrupt autopurchase
+        Sleep, 100
+        scaledClick(201, 143, options := "", force := true) ; character tab to cancel the autospending
+        Sleep, 100
+        scaledClick(201, 459, options := "", force := true) ; bloodweb tab
+        Sleep, 100
+        MouseMove, oldX, oldY
+    }
 }
 
 scaledMouseMove(x, y, force := false) {
