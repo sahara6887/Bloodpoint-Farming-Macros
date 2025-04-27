@@ -30,17 +30,6 @@ global enabled := false
     SetTimer, CheckPixels, 100
 Return
 
-; Interrupt
-~F7::
-    disable()
-    Sleep, 100
-    scaledClick(201, 143, options := "", force := true) ; character tab to cancel the autospending
-    Sleep, 100
-    scaledClick(201, 459, options := "", force := true) ; bloodweb tab
-    Sleep, 100
-    scaledMouseMove(910, 755, force := true)
-Return
-
 ^+F6::
 JustCheckLevel:
 ; Debug stub to check level-detection without actually spending
@@ -52,6 +41,19 @@ disable() {
     enabled := false
     ToolTip
     SetTimer, CheckPixels, Off
+
+    MouseGetPos, oldX, oldY
+
+    level := getBloodwebLevel()
+    if (level = 10 or level > 11) {
+        ; Interrupt autopurchase
+        Sleep, 100
+        scaledClick(201, 143, options := "", force := true) ; character tab to cancel the autospending
+        Sleep, 100
+        scaledClick(201, 459, options := "", force := true) ; bloodweb tab
+        Sleep, 100
+        MouseMove, oldX, oldY
+    }
 }
 
 scaledMouseMove(x, y, force := false) {
