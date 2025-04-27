@@ -18,6 +18,13 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - Auto-clicker for spending bloodpoints.
 - F6 = Toggle ON / F7 = Toggle OFF
 
+## Autospend
+- F6 to spend BP using the [fast bloodweb tech](https://www.reddit.com/r/deadbydaylight/s/njguTZBODp).
+- Experimental. May not work.
+- Supports 1080p and 1440p resolutions.
+- Run windowed at these resolutions if you need to.
+- Disable filters if they interfere.
+
 ## Killer Shuffle
 - Killer will repeatedly move forwards and backwards in place to allow survivors to get into chase (Spin blinding, Gen dancing, etc.).
 - F2 = start dancing
