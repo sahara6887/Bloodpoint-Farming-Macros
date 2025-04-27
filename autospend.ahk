@@ -19,6 +19,12 @@ global enabled := false
 ; Start spending
 ~F6::
     enabled := true
+    level := getBloodwebLevel()
+    if (level = -1) {
+        scaledClick(201, 459, options := "", force := true) ; bloodweb tab
+        Sleep, 100
+    }
+
     scaledMouseMove(910, 755)
     ToolTip, Autospending... (wiggle mouse to disable)
     SetTimer, CheckPixels, 100
