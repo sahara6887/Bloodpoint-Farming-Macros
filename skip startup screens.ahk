@@ -35,7 +35,7 @@ return
 ClickThroughScreens:
 {
     ; Main menu: bottom of 'E' of '[ESC]' Some users have funky reshade filters that make this as dark as 0xbfc4b1
-    escText := getColor(251, 1358)
+    escText := getColor(254, 1341)
     escTextIsWhite := isWhiteish(escText)
 
     ; Main menu: Middle of the red '<' arrow
