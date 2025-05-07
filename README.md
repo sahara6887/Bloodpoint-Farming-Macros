@@ -24,6 +24,7 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - Supports 1080p and 1440p resolutions.
 - Run windowed at these resolutions if you need to.
 - Disable filters if they interfere.
+- Demo: https://youtu.be/duVNbdo9qLM
 
 ## Killer Shuffle
 - Killer will repeatedly move forwards and backwards in place to allow survivors to get into chase (Spin blinding, Gen dancing, etc.).
