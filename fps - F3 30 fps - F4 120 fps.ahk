@@ -4,7 +4,7 @@
 #IfWinActive DeadByDaylight
 if (FileExist("icons/fps-120.ico"))
     Menu, Tray, Icon, icons/fps-120.ico
-CoordMode, Pixel, Window
+CoordMode, Pixel, Client
 
 SetMouseDelay, -1 ; Make cursor move instantly rather than mimicking user behavior
 global xScale, yScale, lastCheckedColor

@@ -13,7 +13,7 @@ Requirements:
 if (FileExist("icons/esc.ico"))
     Menu, Tray, Icon, icons/esc.ico
 
-CoordMode, Pixel, Window
+CoordMode, Pixel, Client
 
 SetMouseDelay, -1 ; Make cursor move instantly rather than mimicking user behavior
 global xScale, yScale
@@ -92,13 +92,25 @@ clickFinalAbandonButton() {
 ; All pixel coordinates are relative to a 1440p monitor.
 ; Detect a scaling factor for other resolutions such as 1080p.
 ; This should be tested every time in case the resolution changes.
-; Runtime of this function was measured at 0 ms, so it's effectively free.
+; Runtime of this function was measured at 0 ms, so it's effectively free
 detectDbdWindowScale() {
-    WinGetPos, ignoredX, ignoredY, DbdWidth, DbdHeight, DeadByDaylight
+    static lastCheck := 0
 
-    ; Scaling factor for monitors at resolutions other than 2560x1440
-    xScale := DbdWidth / 2560
-    yScale := DbdHeight / 1440
+    if (A_TickCount - lastCheck > 1000) {
+        ; WinGetPos, winX, winY, DbdWidth, DbdHeight, DeadByDaylight
+        ; WinGetPos does not return the client area height while windowed, regardless of CoordMode, Client.
+        WinGet, hwnd, ID, DeadByDaylight
+        VarSetCapacity(rect, 16, 0)
+        DllCall("GetClientRect", "ptr", hwnd, "ptr", &rect)
+        DbdWidth  := NumGet(rect, 8, "Int")
+        DbdHeight := NumGet(rect, 12, "Int")
+
+        ; Scaling factor for monitors at resolutions other than 2560x1440
+        xScale := DbdWidth / 2560
+        yScale := DbdHeight / 1440
+
+        lastCheck := A_TickCount
+    }
 }
 
 isSettingsOpen() {
@@ -192,6 +204,7 @@ isRedish(color) {
 }
 
 getColor(x, y) {
+    detectDbdWindowScale()
     scaledX := Round(x * xScale)
     scaledY := Round(y * yScale)
 
@@ -214,12 +227,12 @@ scaledClick(x, y) {
 
 log(msg) {
     ; Uncomment while developing:
-    ; OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
+    OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
 }
 
 info(msg) {
     ; Uncomment while developing:
-    ; OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
+    OutputDebug, %msg% ; view with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
 }
 
 doNothing() {

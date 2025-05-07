@@ -9,7 +9,7 @@
 
 global xScale, yScale
 
-CoordMode, Pixel, Window
+CoordMode, Pixel, Client
 
 SetMouseDelay, -1 ; Make cursor move instantly rather than mimicking user behavior
 
