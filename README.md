@@ -56,6 +56,7 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 ## Match Timer
 - A simple match timer that resets when the black bars at the top/bottom of the screen fully disappear.
 - Window is always on top and draggable.
+
 ![Match Timer and taskbar icons](assets/match-timer.png)
 
 ## Abandon Match
