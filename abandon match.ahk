@@ -54,14 +54,30 @@ abandonMatch() {
 isEscapeAbandonOptionVisible() {
     ; Samples the [ESC] ABANDON button background in the top right
     ; in a spot that's common across keyboard (ESC), PS5 (OPTIONS)
-    global escBlackBg1 := getColor(2189, 82)
-    global escBlackBg2 := getColor(2199, 82)
-    global escBlackBg3 := getColor(2188, 90)
-    global escBlackBg4 := getColor(2199, 90)
-    global escNotBlackBg1 := getColor(2169, 43)
-    global escNotBlackBg2 := getColor(2220, 43)
-    global escNotBlackBg3 := getColor(2169, 104)
-    global escNotBlackBg4 := getColor(2220, 104)
+
+    ; The button position moved for dbd 8.7.0.
+    xShift := 9
+    yShift := 19
+
+    ; Black background
+    bgLeftX := 2189 + xShift
+    bgRightX := 2199 + xShift
+    bgTopY := 82 + yShift
+    bgBotY := 88 + yShift
+    global escBlackBg1 := getColor(bgLeftX, bgTopY)
+    global escBlackBg2 := getColor(bgRightX, bgTopY)
+    global escBlackBg3 := getColor(bgLeftX, bgBotY)
+    global escBlackBg4 := getColor(bgRightX, bgBotY)
+
+    ; Outside of the button, which we assume to be non-black.
+    fgLeftX := 2169 + xShift
+    fgRightX := 2220 + xShift
+    fgTopY := 43 + yShift
+    fgBotY := 104 + yShift
+    global escNotBlackBg1 := getColor(fgLeftX, fgTopY)
+    global escNotBlackBg2 := getColor(fgRightX, fgTopY)
+    global escNotBlackBg3 := getColor(fgLeftX, fgBotY)
+    global escNotBlackBg4 := getColor(fgRightX, fgBotY)
 
     buttonIsBlack := escBlackBg1 = 0 and escBlackBg2 = 0 and escBlackBg3 = 0 and escBlackBg4 = 0
     surroundIsNotBlack := escNotBlackBg1 != 0 and escNotBlackBg2 != 0 and escNotBlackBg3 != 0 and escNotBlackBg4 != 0
