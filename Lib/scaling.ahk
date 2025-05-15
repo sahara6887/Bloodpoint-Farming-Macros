@@ -66,7 +66,7 @@ class ScaledOps extends BaseOps {
         scaledX := this.scaleX(x)
         scaledY := this.scaleY(y)
 
-        OutputDebug("scaled.click(" x "=>" scaledX ", " y "=>" scaledY ")")
+        OutputDebug("scaled.click(" x "=>" scaledX ", " y "=>" scaledY ") " options)
         return this.ops.click(scaledX, scaledY, options)
     }
 

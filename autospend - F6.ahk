@@ -34,11 +34,12 @@ class Autospender {
         this.ops := ops
         this.scaled := ScaledOps(ops)
         this.scaled.enabled := false
+        this.timerFunc := this.CheckPixels.Bind(this)
     }
 
     startSpending() {
-        ; if this.scaled.enabled
-        ;     return
+        if this.scaled.enabled
+            return
         this.scaled.enabled := true
         OutputDebug("Started spending")
 
@@ -50,16 +51,17 @@ class Autospender {
 
         this.scaled.mouseMove(910, 755)
         ToolTip("Autospending... (wiggle mouse to disable)")
-        SetTimer(this.CheckPixels.Bind(this), 100)
+    
+        this.timer := SetTimer(this.timerFunc, 100)
     }
 
     disable() {
-        ; if !this.scaled.enabled
-        ;     return
+        if !this.scaled.enabled
+            return
         this.scaled.enabled := false
         OutputDebug("Stopped spending")
         ToolTip()
-        SetTimer(this.CheckPixels.Bind(this), 0)
+        SetTimer(this.timerFunc, 0)
 
         MouseGetPos(&oldX, &oldY)
 
