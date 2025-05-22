@@ -1,84 +1,91 @@
-﻿#Persistent
-#NoEnv
-#SingleInstance Force
-#NoEnv
+﻿#Include Lib\common.ahk
 
-SetBatchLines, -1 ; Remove the built-in sleeps to get more consistent timing maybe
-
-if (FileExist("icons/shuffle.ico"))
-    Menu, Tray, Icon, icons/shuffle.ico
+setTrayIcon("icons/shuffle.ico")
 
 ; Dances forward and backwards in place, maintaining chase with survivors.
 ; Stops automatically if DBD loses focus or any of WASD are pressed.
 
-global IsEnabled, IsWDown, IsSDown
-
 ; Start dancing
-#IfWinActive, DeadByDaylight
+#HotIf WinActive("DeadByDaylight")
 ~F2::
+{
+    global
     IsEnabled := true
-    Loop
-    {
-        If (!IsEnabled)
-            Break
+    loop {
+        if (!IsEnabled)
+            break
 
-        holdKey("w", 50, IsWDown)
-        holdKey("s", 50, IsSDown)
+        holdKey("w", 50, &IsWDown)
+        holdKey("s", 50, &IsSDown)
     }
-Return
+    return
+}
 
-holdKey(key, holdTime, ByRef isKeyDown) {
+holdKey(key, holdTime, &isKeyDown) {
+    global
     ; If DBD loses focus, stop. Don't spam "wswsws" to other windows.
-    WinGetTitle, title, A
+    title := WinGetTitle("A")
     if (Trim(title) != "DeadByDaylight") {
         disable()
         return
     }
-    If (!IsEnabled)
+    if (!IsEnabled)
         return
 
     ; Send the key down event
-    SendInput, % "{" key " down}"
+    SendInput("{" key " down}")
     isKeyDown := true
-    Sleep, holdTime  ; Hold the key down for the specified time
+    Sleep(holdTime)  ; Hold the key down for the specified time
 
-    If (!IsEnabled)
+    if (!IsEnabled)
         return
     ; Reset key state and send key up event
     isKeyDown := false
-    SendInput, % "{" key " up}"
+    SendInput("{" key " up}")
 }
 
 ; WASD key down handlers with pass-through
 ; WS need special handling.
 ; For example, we do not want to send W up if the user starts holding W.
 ~w::
-disable()
-resetS()
-return
+{
+    global
+    disable()
+    resetS()
+    return
+}
 ~s::
-disable()
-resetW()
-return
+{
+    global
+    disable()
+    resetW()
+    return
+}
 ~a::
 ~d::
-disable()
-resetW()
-resetS()
-return
+{
+    global
+    disable()
+    resetW()
+    resetS()
+    return
+}
 
 resetW() {
+    global
     if (IsWDown) {
-        SendInput, % "{w up}"
+        SendInput("{w up}")
         IsWDown := false
     }
 }
 resetS() {
+    global
     if (IsSDown) {
-        SendInput, % "{s up}"
+        SendInput("{s up}")
         IsSDown := false
     }
 }
 disable() {
+    global
     IsEnabled := false
 }

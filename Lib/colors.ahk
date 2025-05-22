@@ -29,7 +29,6 @@ RGBtoHSL(r, g, b) {
     return [h, s, l]  ; returns hue (0..1), saturation, lightness
 }
 
-
 isWhiteish(color, threshold := 0xD0) {
     ; Most reshade filters leave near-pure-white pixels as near-pure-white.
     r := (color >> 16) & 0xFF
@@ -41,34 +40,10 @@ isWhiteish(color, threshold := 0xD0) {
 }
 
 isRedish(color) {
-    r := ((color >> 16) & 0xFF) / 255.0
-    g := ((color >> 8) & 0xFF) / 255.0
-    b := (color & 0xFF) / 255.0
-
-    max := r, min := r
-    if (g > max)
-        max := g
-    if (b > max)
-        max := b
-    if (g < min)
-        min := g
-    if (b < min)
-        min := b
-
-    delta := max - min
-
-    if (delta = 0) {
-        return false  ; grayscale (no hue)
-    } else if (max = r) {
-        hue := 60 * Mod(((g - b) / delta), 6)
-    } else if (max = g) {
-        hue := 60 * (((b - r) / delta) + 2)
-    } else {
-        hue := 60 * (((r - g) / delta) + 4)
-    }
-
-    if (hue < 0)
-        hue += 360
+    r := (color >> 16) & 0xFF
+    g := (color >> 8) & 0xFF
+    b := color & 0xFF
+    hue := RGBtoHSL(r, g, b)[1]
 
     ; Reddish hue range: 0–20 or 340–360
     return hue <= 20 || hue >= 340
