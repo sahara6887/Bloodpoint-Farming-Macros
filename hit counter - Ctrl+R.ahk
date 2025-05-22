@@ -1,49 +1,44 @@
-#Persistent
-#NoEnv
-#SingleInstance Force
-#IfWinActive DeadByDaylight
+#Include Lib\common.ahk
+#HotIf WinActive("DeadByDaylight",)
 
 ; Counts how many times M1 was pressed repeatedly with a debouce time of ~STBFL=8.
 ; Useful track the number of self-heal rotations in Reactive Healing builds.
 ;
 ; Hides the counter if there are no M1s for the specified duration.
 ; Usually this means that the rective portion is done.
-global HideTimerAfterNoHitsForMs := 15000
+HideTimerAfterNoHitsForMs := 15000
 
-SetBatchLines, -1
-SendMode Input
-if (FileExist("icons/reactive.ico"))
-    Menu, Tray, Icon, icons/reactive.ico
+SendMode("Input")
+setTrayIcon("icons/reactive.ico")
 
-global counter := 0
-global lastHitTimestamp := 0
+counter := 0
+lastHitTimestamp := 0
 
 ; Create GUI
-Gui +LastFound +AlwaysOnTop +ToolWindow -Caption +Disabled
-Gui, Color, 0  ; Set background to black
-Gui, Font, cWhite s60 Bold
-Gui, Add, Text, vCounterText w300 BackgroundTrans, % 0
-
-Gui, +LastFound  ; Mark this GUI as the "last found" window
-WinSet, TransColor, 0  ; set black as transparent
+myGui := Gui("+LastFound +AlwaysOnTop +ToolWindow -Caption +Disabled", "M1 Counter")
+myGui.BackColor := "0"  ; Set background to black
+myGui.SetFont("cWhite s60 Bold")
+counterText := myGui.Add("Text", "vCounterText w300 BackgroundTrans", 0)
+WinSetTransColor(0)  ; set black as transparent
 return
 
-~^-::
-if (counter > 0)
-    setCounter(counter - 1)
-Return
+~^-:: {
+    if (counter > 0)
+        setCounter(counter - 1)
+}
 
-~^=::
-setCounter(counter + 1)
-Return
-
-; Show and reset the counter
-~^r::
+~^=:: {
+    setCounter(counter + 1)
+}
+~^r:: {
+    global
     setCounter(0)
     lastHitTimestamp := 0 ; Allow M1 to register immediately.
-return
+}
 
 ~LButton::
+{
+    global
     now := A_TickCount
     millisSinceLastHit := now - lastHitTimestamp
     ; STBFL=8 is ~2000 ms
@@ -51,22 +46,23 @@ return
         lastHitTimestamp := now
         setCounter(counter + 1)
     }
-return
+}
 
 setCounter(value) {
-    OutputDebug, Setting counter to %value%
+    global counter
+    logger.info("Setting counter to " value)
     counter := value
     if (value = 0) {
-        Gui, Hide
+        myGui.Hide()
     } else {
-        Gui, Show, x70 y400 NoActivate
-        SetTimer, ResetCounter, %HideTimerAfterNoHitsForMs%
-        GuiControl,, CounterText, % counter
+        myGui.Show("x70 y400 NoActivate")
+        SetTimer(ResetCounter, HideTimerAfterNoHitsForMs)
+        counterText.Value := counter
     }
 }
 
-ResetCounter:
-SetTimer,, Off
-setCounter(0)
-OutputDebug, Resetting counter because no hits within %HideTimerAfterNoHitsForMs%.
-return
+ResetCounter() {
+    SetTimer(, 0)
+    setCounter(0)
+    logger.info("Resetting counter because no hits within " HideTimerAfterNoHitsForMs ".")
+}
