@@ -10,8 +10,8 @@
 
 logger := TestLogger()
 
-; Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug, YunitStdOut).Test(AutospenderTests)
-Yunit.Use(YunitJUnit, YunitOutputDebug, YunitStdOut).Test(AutospenderTests)
+Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug, YunitStdOut).Test(AutospenderTests)
+; Yunit.Use(YunitJUnit, YunitOutputDebug, YunitStdOut).Test(AutospenderTests)
 
 class AutospenderTests {
     __New() {
@@ -34,10 +34,12 @@ class AutospenderTests {
     testIsDbdFinishedLoadingMainMenu1080() => assertIsDbdFinishedLoading(A_ScriptDir "\screenshots\mainmenu\mainmenu_1080.png")
     testIsDbdFinishedLoadingBloodweb1440() => assertIsDbdFinishedLoading(A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49.png")
 
-    testAssertIsHookSpaceOptionAvailable1440() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHook1440.png")   
-    testAssertIsHookSpaceOptionAvailable1080() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHook1080.png")   
-    testAssertIsHookSpaceOptionAvailable1440Reshade() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHookReshade1440.png")
-    testAssertIsHookSpaceOptionAvailable1080Reshade() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHookReshade1080.png")
+    testIsHookSpaceOptionAvailable1440() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHook1440.png")   
+    testIsHookSpaceOptionAvailable1080() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHook1080.png")   
+    testIsHookSpaceOptionAvailable1440Reshade() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHookReshade1440.png")
+    testIsHookSpaceOptionAvailable1080Reshade() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHookReshade1080.png")
+
+    testIsAbandonEscapeOptionVisible1440() => assertIsAbandonEscapeOptionVisible(A_ScriptDir "\screenshots\match\matchAbandonEsc1440.png")
 }
 
 setupFakeWindow(screenshotPath) {
@@ -73,3 +75,11 @@ assertIsHookSpaceOptionAvailable(screenshotPath) {
     Yunit.Assert(isHookSpaceOptionAvailable())
     Gdip_DisposeImage(pBitmap)
 }
+
+
+assertIsAbandonEscapeOptionVisible(screenshotPath) {
+    pBitmap := setupFakeWindow(screenshotPath)
+    Yunit.Assert(isAbandonEscapeOptionVisible())
+    Gdip_DisposeImage(pBitmap)
+}
+
