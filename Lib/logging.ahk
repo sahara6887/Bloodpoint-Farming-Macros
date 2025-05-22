@@ -2,15 +2,19 @@
 
 ; View OutputDebug messages with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
 
-warn(msg) {
-    OutputDebug(msg)
-}
-info(msg) {
-    OutputDebug(msg)
-}
-debug(msg) {
-    ; OutputDebug(msg)
-}
-trace(msg) {
-    ; OutputDebug(msg)
+logger := LoggerOps()
+
+class LoggerOps {
+    warn(msg) {
+        OutputDebug(msg)
+    }
+    info(msg) {
+        OutputDebug(msg)
+    }
+    debug(msg) {
+        ; OutputDebug(msg)
+    }
+    trace(msg) {
+        ; OutputDebug(msg)
+    }
 }

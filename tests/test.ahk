@@ -8,30 +8,46 @@
 #Include ..\Lib\dbd.ahk
 #Include ..\Lib\scaling.ahk
 
+logger := TestLogger()
+
 Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug, YunitStdOut).Test(AutospenderTests)
 
 class AutospenderTests {
+    __New() {
+        this.pToken := Gdip_Startup()
+    }
+
+    __Delete() {
+        Gdip_Shutdown(this.pToken)
+    }
+
     bloodweb_1440_level49() => assertBloodwebLevel(49, A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49.png")
     bloodweb_1440_level49_reshade() => assertBloodwebLevel(49, A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49_reshade.png")
     ; FIXME: bloodweb_1080_level21() => assertBloodwebLevel(21, A_ScriptDir "\screenshots\bloodweb\bloodweb_1080_level21.png")
     ; FIXME: bloodweb_1080_level21_reshade() => assertBloodwebLevel(21, A_ScriptDir "\screenshots\bloodweb\bloodweb_1080_level21_reshade.png")
+
+    settingsMatchDetailsAbandon() => assertIsSettingsOpen(A_ScriptDir "\screenshots\settings\matchdetails_abandon_1440.png")
 }
 
-assertBloodwebLevel(expectedLevel, screenshotPath) {
-    level := testGetBloodwebLevel(screenshotPath)
-    Yunit.Assert(level == expectedLevel, "level=" level " expected=" expectedLevel)
-}
-testGetBloodwebLevel(screenshotPath) {
-    global dbdWindow, ops
-    pToken := Gdip_Startup()
+setupFakeWindow(screenshotPath) {
+    global dbdWindow, ops, scaled
     pBitmap := Gdip_CreateBitmapFromFile(screenshotPath)
-
     dbdWindow := DbdTestWindow(pBitmap)
     ops := TestOps(pBitmap)
     scaled := ScaledOps(ops)
-    level := getBloodwebLevel()
+    return pBitmap
+}
 
+assertBloodwebLevel(expectedLevel, screenshotPath) {
+    pBitmap := setupFakeWindow(screenshotPath)
+    level := getBloodwebLevel()
     Gdip_DisposeImage(pBitmap)
-    Gdip_Shutdown(pToken)
-    return level
+    Yunit.Assert(level == expectedLevel, "level=" level " expected=" expectedLevel)
+}
+
+assertIsSettingsOpen(screenshotPath) {
+    global dbdWindow, ops
+    pBitmap := setupFakeWindow(screenshotPath)
+    Yunit.Assert(isSettingsOpen())
+    Gdip_DisposeImage(pBitmap)
 }

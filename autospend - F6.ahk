@@ -2,8 +2,6 @@
 Bloodweb autospender using the speed tech from:
 https://www.reddit.com/r/deadbydaylight/s/njguTZBODp
 */
-#Requires AutoHotkey v2.0
-#SingleInstance
 #HotIf WinActive("DeadByDaylight")
 #Include Lib\common.ahk
 
@@ -35,7 +33,7 @@ class Autospender {
         if this.enabled
             return
         this.enabled := true
-        info("Started spending")
+        logger.info("Started spending")
 
         level := getBloodwebLevel()
         if (level = -1) {
@@ -53,7 +51,7 @@ class Autospender {
         if !this.enabled
             return
         this.enabled := false
-        info("Stopped spending")
+        logger.info("Stopped spending")
         ToolTip()
         SetTimer(this.timerFunc, 0)
 
@@ -115,7 +113,7 @@ class Autospender {
 
         expected := this.expectedNextLevel()
         if (level != -1 && level != this.prevLevel && level != expected) {
-            warn("Surprise level! expected=" expected " actual=" level)
+            logger.warn("Surprise level! expected=" expected " actual=" level)
             ; Wait, really? Maybe we split reads across two frames.
             ; Hopefully trying again fixes it.
             Sleep(100)

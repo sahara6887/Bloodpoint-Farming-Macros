@@ -22,7 +22,7 @@ doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
         }
     }
 
-    warn("Failed waiting for " . predicate.Name . " after " . maxDurationMs . " ms.")
+    logger.warn("Failed waiting for " . predicate.Name . " after " . maxDurationMs . " ms.")
 
     Exit()
 }

@@ -31,22 +31,13 @@ RGBtoHSL(r, g, b) {
 
 
 isWhiteish(color, threshold := 0xD0) {
-    
-    ; Some pixels starts off-white and eventually becomes full white.
-    ; We only care if each RGB component is > 0xF8, so we'll mask the low bits
     ; Most reshade filters leave near-pure-white pixels as near-pure-white.
-    ; isWhiteish := (color | 0x070707) = 0xFFFFFF
-
-    ; isBrightish is a less specific alternative for users with reshade filters that transform white pixels to:
-    ; - non-white, e.g. tint
-    ; - non-stable values that change based on surrounding pixels (fog removal, bloom, etc.)
-    ; Setting to isBrightish may result in false positives.
     r := (color >> 16) & 0xFF
     g := (color >> 8) & 0xFF
     b := color & 0xFF
-    isBrightish := r > threshold && g > threshold && b > threshold
-
-    return isBrightish
+    lowSat := abs(r - g) < 5 && abs(r - b) < 5
+    brightEnough := r >= threshold
+    return lowSat && brightEnough
 }
 
 isRedish(color) {

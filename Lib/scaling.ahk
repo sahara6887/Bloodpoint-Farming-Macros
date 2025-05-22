@@ -80,7 +80,7 @@ class ScaledOps extends Decorator {
         scaledX := this.scaleX(x)
         scaledY := this.scaleY(y)
 
-        trace("scaled.click(" x "=>" scaledX ", " y "=>" scaledY ") " options)
+        logger.trace("scaled.click(" x "=>" scaledX ", " y "=>" scaledY ") " options)
         return this.underlying.click(scaledX, scaledY, options)
     }
 
@@ -90,7 +90,7 @@ class ScaledOps extends Decorator {
 
         color := this.underlying.getColor(scaledX, scaledY)
 
-        trace("getColor(" x ", " y ") => (" scaledX ", " scaledY ")=" color)
+        logger.trace("getColor(" x ", " y ") => (" scaledX ", " scaledY ")=0x" Format("{:06X}", color))
 
         return color
     }

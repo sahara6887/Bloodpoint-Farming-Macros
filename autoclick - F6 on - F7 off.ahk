@@ -1,10 +1,7 @@
-﻿#Requires AutoHotkey v2.0
-#SingleInstance
-#HotIf WinActive("DeadByDaylight", )
-if (FileExist("icons/autopurchase.ico"))
-  TraySetIcon("icons/autopurchase.ico")
+﻿#Include Lib\common.ahk
+#HotIf WinActive("DeadByDaylight")
 
-clickHoldTime := 50 ; in milliseconds
+setTrayIcon("icons/autopurchase.ico")
 
 IsEnabled := false
 
@@ -27,7 +24,7 @@ IsEnabled := false
       If (!IsEnabled)
         Break
       Click("down, Left")
-      Sleep(clickHoldTime)
+      Sleep(50)
       Click("up, Left")
     }
     Return

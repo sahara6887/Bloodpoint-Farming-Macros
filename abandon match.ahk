@@ -31,7 +31,7 @@ CheckForAbandon() {
         abandonMatch()
 
         abandonTookMs := A_TickCount - start
-        info("Abandoning match took " . abandonTookMs . " ms")
+        logger.info("Abandoning match took " . abandonTookMs . " ms")
     }
     return
 }

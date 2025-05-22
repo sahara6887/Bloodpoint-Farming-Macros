@@ -43,7 +43,7 @@ selectFpsOption(x, y) {
     closeSettings()
 
     settingFpsTookMs := A_TickCount - start
-    info("Setting FPS took " . settingFpsTookMs . " ms")
+    logger.info("Setting FPS took " . settingFpsTookMs . " ms")
 }
 
 ; All pixel coordinates are relative to a 1440p monitor.
