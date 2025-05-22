@@ -1,11 +1,16 @@
 #Requires AutoHotkey v2.0
 
+#Include logging.ahk
+#Include decorator.ahk
+
 CoordMode "Pixel", "Client"
 CoordMode "Mouse", "Client"
 
-dbd := DbdWindow()
+dbdWindow := DbdWindowOps()
+ops := WindowOps()
+scaled := ScaledOps(ops)
 
-class DbdWindow {
+class DbdWindowOps {
     checkScale() {
         static lastCheck := 0
 
@@ -29,7 +34,7 @@ class DbdWindow {
 /**
  * Wrapper around default operations so we can DI fakes for testing.
  */
-class BaseOps {
+class WindowOps {
     click(x, y, options := "") {
         BlockInput("MouseMove")  ; Block mouse movement
         Click(x " " y " " options)
@@ -41,53 +46,59 @@ class BaseOps {
 }
 
 /**
+ * Controls whether actions are taken or ignored completely.
+ * AHK doesn't support hard interruption of a sequence of actions, so it must be done cooperatively.
+ * It's more convenient to have all actions check a flag than to replicate the check everywhere.
+ */
+class DisableableWindowOps extends Decorator {
+    enabled := false
+
+    mouseMove(x, y) {
+        if this.enabled
+            return this.underlying.mouseMove(x, y)
+    }
+    click(x, y, options := "") {
+        if this.enabled
+            return this.underlying.click(x, y, options)
+    }
+}
+
+/**
  * Scales the coordinates of the operations to the current window size.
  */
-class ScaledOps extends BaseOps {
-    /**
-     * Whether actions are taken or ignored completely.
-     * AHK doesn't support hard interruption of a sequence of actions, so it must be done cooperatively.
-     * It's more convenient to have all actions check a flag than to replicate the check everywhere.
-     */
-    enabled := true
-
-    __New(ops, baseWidth := 2560, baseHeight := 1440) {
-        this.ops := ops
+class ScaledOps extends Decorator {
+    __New(underlying := WindowOps(), baseWidth := 2560, baseHeight := 1440) {
+        super.__New(underlying)
         this.baseWidth := baseWidth
         this.baseHeight := baseHeight
     }
 
-    scaleX(x) => Round(x * dbd.width / this.baseWidth)
-    scaleY(y) => Round(y * dbd.height / this.baseHeight)
+    scaleX(x) => Round(x * dbdWindow.width / this.baseWidth)
+    scaleY(y) => Round(y * dbdWindow.height / this.baseHeight)
 
     click(x, y, options := "") {
-        if !this.enabled
-            return
         scaledX := this.scaleX(x)
         scaledY := this.scaleY(y)
 
-        OutputDebug("scaled.click(" x "=>" scaledX ", " y "=>" scaledY ") " options)
-        return this.ops.click(scaledX, scaledY, options)
+        trace("scaled.click(" x "=>" scaledX ", " y "=>" scaledY ") " options)
+        return this.underlying.click(scaledX, scaledY, options)
     }
 
     getColor(x, y) {
         scaledX := this.scaleX(x)
         scaledY := this.scaleY(y)
 
-        color := this.ops.getColor(scaledX, scaledY)
+        color := this.underlying.getColor(scaledX, scaledY)
 
-        OutputDebug("getColor(" x ", " y ") => (" scaledX ", " scaledY ")=" color)
+        trace("getColor(" x ", " y ") => (" scaledX ", " scaledY ")=" color)
 
         return color
     }
 
     mouseMove(x, y) {
-        if !this.enabled
-            return
-
         scaledX := this.scaleX(x)
         scaledY := this.scaleY(y)
 
-        this.ops.mouseMove(scaledX, scaledY)
+        this.underlying.mouseMove(scaledX, scaledY)
     }
 }

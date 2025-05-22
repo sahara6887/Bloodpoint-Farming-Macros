@@ -2,7 +2,7 @@
 
 #Include ..\..\Lib\Gdip_All.ahk
 
-class DbdTestWindow extends DbdWindow {
+class DbdTestWindow extends DbdWindowOps {
     __New(pBitmap) {
         if !pBitmap
             throw Error("DbdTestWindow requires a pBitmap")
@@ -14,7 +14,7 @@ class DbdTestWindow extends DbdWindow {
     }
 }
 
-class TestOps extends BaseOps {
+class TestOps extends WindowOps {
     __New(pBitmap) {
         if !pBitmap
             throw Error("TestOps requires a pBitmap")
