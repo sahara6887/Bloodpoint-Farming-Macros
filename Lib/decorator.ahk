@@ -1,4 +1,4 @@
-#Requires AutoHotkey v2.0
+#Requires AutoHotkey v2+
 
 /**
  * Forwards all method calls to the underlying object.

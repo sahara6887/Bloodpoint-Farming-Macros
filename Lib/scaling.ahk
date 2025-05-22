@@ -1,4 +1,4 @@
-#Requires AutoHotkey v2.0
+#Requires AutoHotkey v2+
 
 #Include logging.ahk
 #Include decorator.ahk

@@ -1,4 +1,5 @@
-﻿/*
+﻿#Requires AutoHotkey v2+
+/*
 Uses the Abandon Match feature as soon as available.
 
 Requirements:

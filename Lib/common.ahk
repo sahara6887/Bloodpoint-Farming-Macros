@@ -1,4 +1,4 @@
-#Requires AutoHotkey v2.0
+#Requires AutoHotkey v2+
 
 #Include colors.ahk
 #Include dbd.ahk

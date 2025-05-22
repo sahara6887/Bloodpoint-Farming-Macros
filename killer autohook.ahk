@@ -1,4 +1,5 @@
-﻿#Include Lib\common.ahk
+﻿#Requires AutoHotkey v2+
+#Include Lib\common.ahk
 
 setTrayIcon("icons/hook.ico")
 

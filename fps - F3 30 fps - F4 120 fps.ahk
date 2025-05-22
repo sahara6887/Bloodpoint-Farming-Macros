@@ -1,4 +1,5 @@
-﻿#Include Lib/common.ahk
+﻿#Requires AutoHotkey v2+
+#Include Lib/common.ahk
 #HotIf WinActive("DeadByDaylight")
 setTrayIcon("icons/fps-120.ico")
 

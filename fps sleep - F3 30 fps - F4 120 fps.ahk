@@ -1,4 +1,5 @@
-﻿#Include Lib\common.ahk
+﻿#Requires AutoHotkey v2+
+#Include Lib\common.ahk
 #HotIf WinActive("DeadByDaylight")
 
 ; This macro much is slower than the default one,

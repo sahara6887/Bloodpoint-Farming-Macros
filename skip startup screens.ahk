@@ -1,5 +1,7 @@
-﻿; Skips DBD startup screens until the [ESC] text on main menu is visible.
+﻿#Requires AutoHotkey v2+
 #Include Lib\common.ahk
+
+; Skips DBD startup screens until the [ESC] text on main menu is visible.
 
 ; Set showToolTip to false if you don't want tooltip status reports.
 showToolTip := true

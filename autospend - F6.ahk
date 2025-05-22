@@ -1,4 +1,5 @@
-﻿/*
+﻿#Requires AutoHotkey v2+
+/*
 Bloodweb autospender using the speed tech from:
 https://www.reddit.com/r/deadbydaylight/s/njguTZBODp
 */

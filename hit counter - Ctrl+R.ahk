@@ -1,3 +1,4 @@
+#Requires AutoHotkey v2+
 #Include Lib\common.ahk
 #HotIf WinActive("DeadByDaylight",)
 

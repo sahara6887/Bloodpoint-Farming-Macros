@@ -1,4 +1,4 @@
-#Requires AutoHotkey v2.0
+#Requires AutoHotkey v2+
 
 ; View OutputDebug messages with https://learn.microsoft.com/en-us/sysinternals/downloads/debugview
 

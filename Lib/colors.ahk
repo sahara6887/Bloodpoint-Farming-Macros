@@ -1,4 +1,4 @@
-#Requires AutoHotkey v2.0
+#Requires AutoHotkey v2+
 
 RGBtoHSL(r, g, b) {
     r := r / 255.0
