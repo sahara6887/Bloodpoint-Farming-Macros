@@ -42,7 +42,7 @@ class WindowOps {
     }
 
     mouseMove(x, y) => MouseMove(x, y)
-    getColor(x, y) => PixelGetColor(x, y)
+    getColor(x, y) => (PixelGetColor(x, y) & 0xFFFFFF)
 }
 
 /**

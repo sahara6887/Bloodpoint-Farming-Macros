@@ -141,3 +141,17 @@ isAbandonConfirmOpen() {
     global confirmWhiteN := scaled.getColor(1375, 372)
     return confirmWhiteA = 0xFFFFFF and confirmWhiteN = 0xFFFFFF
 }
+
+isHookSpaceOptionAvailable() {
+    ; Head of the "carried survivor" icon.
+    ; Chosen because it is not white in the same spot as the "Blight Rush" icon.
+    colorHead := scaled.getColor(227, 1254)
+
+    ; White part of the 'A' of the "[SPACE] HANG" prompt.
+    colorSpaceA := scaled.getColor(1235, 1265)
+
+    ; Black background of the "[SPACE] HANG" prompt to disqualify an all white screen.
+    colorSpaceBg := scaled.getColor(1235, 1269)
+
+    return colorHead = 0xFFFFFF && colorSpaceA = 0xFFFFFF && colorSpaceBg = 0x000000
+}

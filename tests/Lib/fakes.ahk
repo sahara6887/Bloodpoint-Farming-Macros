@@ -22,7 +22,7 @@ class TestOps extends WindowOps {
     }
 
     getColor(x, y) {
-        return Gdip_GetPixel(this.pBitmap, x, y)
+        return Gdip_GetPixel(this.pBitmap, x, y) & 0xFFFFFF
     }
 }
 class TestLogger extends LoggerOps {

@@ -31,7 +31,7 @@ CheckIfDbdRunning() {
 ClickThroughScreens() {
     waitedTooLong := A_TickCount - StartTime > 90000
 
-    if (isMainMenuLoaded() || waitedTooLong) {
+    if (isDbdFinishedLoading() || waitedTooLong) {
         ; Finished/Loaded
         SetTimer(ClickThroughScreens, 0)
 
