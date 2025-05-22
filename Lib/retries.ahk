@@ -15,7 +15,7 @@ doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
         loop 5 {
             if (predicate.Call()) {
                 duration := A_TickCount - startTime
-                info(predicate.Name . " took " . duration . " ms.")
+                logger.info(predicate.Name . " took " . duration . " ms.")
                 return
             }
             Sleep(10)

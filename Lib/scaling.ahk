@@ -67,6 +67,9 @@ class DisableableWindowOps extends Decorator {
  * Scales the coordinates of the operations to the current window size.
  */
 class ScaledOps extends Decorator {
+    baseWidth := 2560
+    baseHeight := 1440
+    
     __New(underlying := WindowOps(), baseWidth := 2560, baseHeight := 1440) {
         super.__New(underlying)
         this.baseWidth := baseWidth

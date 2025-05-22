@@ -3,6 +3,20 @@
 #Include scaling.ahk
 #Include colors.ahk
 
+isDbdFinishedLoading() {
+    ; The text of the ESC button moves around at different resolutions.
+    ; The gear icon is more stable. Check the rightmost spoke for whiteishness.
+    escText := scaled.getColor(438, 1350)
+    escTextIsWhite := isWhiteish(escText, 0x70)
+
+    ; Main menu: Middle of the red '<' arrow
+    ; Can be a dark red without reshade filters, so we must look at hue rather than red component intensity
+    backArrow := scaled.getColor(137, 1349)
+    backArrowIsRed := isRedish(backArrow)
+
+    return escTextIsWhite && backArrowIsRed
+}
+
 isSettingsOpen() {
     ; 'E' of MATCH DETAILS (1999, 100)
     ; ']' of ESC: (295, 1350)
@@ -15,6 +29,20 @@ isSettingsOpen() {
     r := isRedish(settingsRedishBackArrow)
     return w && r
 }
+
+isSettingsGraphicsTabSelected() {
+    ; 'R' of 'GRAPHICS': (950, 100)
+    colorGraphicsR := scaled.getColor(950, 100)
+    return isWhiteish(colorGraphicsR)
+}
+
+
+isSettingsGraphicsFpsMenuOpen() {
+    ; Check for the base of the 2 of the 120: (1771, 1100)
+    colorFps120 := scaled.getColor(1771, 1100)
+    return isWhiteish(colorFps120)
+}
+
 
 getBloodwebLevel() {
     ; Decision-tree OCR.

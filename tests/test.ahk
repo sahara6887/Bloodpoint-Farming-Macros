@@ -10,7 +10,8 @@
 
 logger := TestLogger()
 
-Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug, YunitStdOut).Test(AutospenderTests)
+; Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug, YunitStdOut).Test(AutospenderTests)
+Yunit.Use(YunitJUnit, YunitOutputDebug, YunitStdOut).Test(AutospenderTests)
 
 class AutospenderTests {
     __New() {
@@ -21,12 +22,17 @@ class AutospenderTests {
         Gdip_Shutdown(this.pToken)
     }
 
-    bloodweb_1440_level49() => assertBloodwebLevel(49, A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49.png")
-    bloodweb_1440_level49_reshade() => assertBloodwebLevel(49, A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49_reshade.png")
+    testBloodweb1440Level49() => assertBloodwebLevel(49, A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49.png")
+    testBloodweb1440Level49Reshade() => assertBloodwebLevel(49, A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49_reshade.png")
     ; FIXME: bloodweb_1080_level21() => assertBloodwebLevel(21, A_ScriptDir "\screenshots\bloodweb\bloodweb_1080_level21.png")
     ; FIXME: bloodweb_1080_level21_reshade() => assertBloodwebLevel(21, A_ScriptDir "\screenshots\bloodweb\bloodweb_1080_level21_reshade.png")
 
-    settingsMatchDetailsAbandon() => assertIsSettingsOpen(A_ScriptDir "\screenshots\settings\matchdetails_abandon_1440.png")
+    testSettingsMatchDetailsAbandon() => assertIsSettingsOpen(A_ScriptDir "\screenshots\settings\matchdetails_abandon_1440.png")
+    testSettingsMatchDetailsQuit() => assertIsSettingsOpen(A_ScriptDir "\screenshots\settings\matchdetails_quit_1440.png")
+
+    testIsDbdFinishedLoadingMainMenu1440() => assertisDbdFinishedLoading(A_ScriptDir "\screenshots\mainmenu\mainmenu_1440.png")
+    testIsDbdFinishedLoadingMainMenu1080() => assertisDbdFinishedLoading(A_ScriptDir "\screenshots\mainmenu\mainmenu_1080.png")
+    testIsDbdFinishedLoadingBloodweb1440() => assertisDbdFinishedLoading(A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49.png")
 }
 
 setupFakeWindow(screenshotPath) {
@@ -46,8 +52,13 @@ assertBloodwebLevel(expectedLevel, screenshotPath) {
 }
 
 assertIsSettingsOpen(screenshotPath) {
-    global dbdWindow, ops
     pBitmap := setupFakeWindow(screenshotPath)
     Yunit.Assert(isSettingsOpen())
+    Gdip_DisposeImage(pBitmap)
+}
+
+assertisDbdFinishedLoading(screenshotPath) {
+    pBitmap := setupFakeWindow(screenshotPath)
+    Yunit.Assert(isDbdFinishedLoading())
     Gdip_DisposeImage(pBitmap)
 }
