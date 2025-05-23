@@ -6,7 +6,7 @@ Macros to help with the repetitive/tedious aspects of farming bloodpoints in Dea
 
 ## How to Use
 1. Install [AutoHotkey v2](https://www.autohotkey.com/).
-2. Download the latest macros at https://sahara6887.github.io/Bloodpoint-Farming-Macros/Bloodpoint-Farming-Macros.zip
+2. Download the latest macros at https://BloodpointFarming.github.io/Bloodpoint-Farming-Macros/Bloodpoint-Farming-Macros.zip
 3. Extract *everything* in the zip file.
 4. Open the .ahk files you want to run. (e.g. just double click them)
 5. To turn off the macro, open your system tray > right click the macro > Exit
