@@ -9,7 +9,6 @@ F3::
     selectFpsOption(1760, 778)
     setTrayIcon("icons/fps-30.ico")
 }
-return
 
 ; Set 120 FPS
 F4::
@@ -18,7 +17,6 @@ F4::
     selectFpsOption(1778, 1084)
     setTrayIcon("icons/fps-120.ico")
 }
-return
 
 ; Selects an option from the FPS dropdown at the specified pixel coordinates
 ; relative to a 1440p resolution. These will be scaled for non-1440p resolutions.
@@ -27,9 +25,9 @@ selectFpsOption(x, y) {
     start := A_TickCount
 
     openSettingsGraphicsFpsMenu()
-
     scaled.click(x, y)
 
+    Sleep(20) ; Seems to be necessary.
     closeSettings()
 
     settingFpsTookMs := A_TickCount - start

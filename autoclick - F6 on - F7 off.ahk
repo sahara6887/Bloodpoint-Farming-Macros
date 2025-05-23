@@ -11,7 +11,6 @@ IsEnabled := false
   {
     global
     IsEnabled := false
-    Return
   }
 
 ; Start the clicking
@@ -28,5 +27,4 @@ IsEnabled := false
       Sleep(50)
       Click("up, Left")
     }
-    Return
   }

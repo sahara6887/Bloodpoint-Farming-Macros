@@ -21,7 +21,6 @@ myGui.BackColor := "0"  ; Set background to black
 myGui.SetFont("cWhite s60 Bold")
 counterText := myGui.Add("Text", "vCounterText w300 BackgroundTrans", 0)
 WinSetTransColor(0)  ; set black as transparent
-return
 
 ~^-:: {
     if (counter > 0)

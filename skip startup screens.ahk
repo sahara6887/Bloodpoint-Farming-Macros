@@ -13,7 +13,6 @@ SetTitleMatchMode(1) ; Exact title match
 
 isDbdRunning := false
 SetTimer(CheckIfDbdRunning, 5000)
-return
 
 CheckIfDbdRunning() {
     global
@@ -27,7 +26,6 @@ CheckIfDbdRunning() {
     } else {
         isDbdRunning := false
     }
-    return
 }
 
 ClickThroughScreens() {

@@ -64,7 +64,6 @@ CheckMatchStart() {
         ; Letterbox detected. Record it and prepare for them to be removed.
         isLetterboxVisible := true
         letterBoxFirstSighted := A_TickCount
-        return
     }
 
     if (isLetterboxVisible
@@ -95,7 +94,6 @@ UpdateTimer() {
 DragWindow(A_GuiEvent := "", GuiCtrlObj := "", Info := "", *) {
     global
     PostMessage(0xA1, 2, , , "A")
-    return
 }
 
 GuiClose(*) {

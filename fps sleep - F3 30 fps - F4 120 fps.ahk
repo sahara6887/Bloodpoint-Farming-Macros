@@ -12,7 +12,6 @@ F3::
     ; 30 FPS option
     selectFpsOption(1760, 778)
 }
-return
 
 ; Set 120 FPS (Ctrl+)
 F4::
@@ -20,7 +19,6 @@ F4::
     ; 120 FPS option
     selectFpsOption(1778, 1084)
 }
-return
 
 ; Selects an option from the FPS dropdown at the specified pixel coordinates
 ; relative to a 1440p resolution. These will be scaled for non-1440p resolutions.

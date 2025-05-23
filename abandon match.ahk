@@ -12,12 +12,10 @@ Requirements:
 setTrayIcon("icons/esc.ico")
 
 SetTimer(CheckForAbandon, 500)
-return
 
 ~^+a::
 {
     abandonMatch()
-    return
 }
 
 CheckForAbandon() {
@@ -34,7 +32,6 @@ CheckForAbandon() {
         abandonTookMs := A_TickCount - start
         logger.info("Abandoning match took " . abandonTookMs . " ms")
     }
-    return
 }
 
 abandonMatch() {

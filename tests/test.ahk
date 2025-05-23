@@ -47,6 +47,7 @@ class AutospenderTests {
 
     test_isSettingsGraphicsFpsMenuOpen_1440() => assertFor("settings\graphicsFpsMenu1440.png", isSettingsGraphicsFpsMenuOpen.Bind())
     test_isSettingsGraphicsFpsMenuOpen_1080() => assertFor("settings\graphicsFpsMenu1080.png", isSettingsGraphicsFpsMenuOpen.Bind())
+    test_isSettingsGraphicsFpsMenuOpen_NotOpen1440() => assertFor("settings\graphics1440.png", () => !isSettingsGraphicsFpsMenuOpen())
 }
 
 setupFakeWindow(screenshotPath) {

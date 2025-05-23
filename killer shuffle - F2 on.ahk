@@ -19,7 +19,6 @@ setTrayIcon("icons/shuffle.ico")
         holdKey("w", 50, &IsWDown)
         holdKey("s", 50, &IsSDown)
     }
-    return
 }
 
 holdKey(key, holdTime, &isKeyDown) {
@@ -50,26 +49,20 @@ holdKey(key, holdTime, &isKeyDown) {
 ; For example, we do not want to send W up if the user starts holding W.
 ~w::
 {
-    global
     disable()
     resetS()
-    return
 }
 ~s::
 {
-    global
     disable()
     resetW()
-    return
 }
 ~a::
 ~d::
 {
-    global
     disable()
     resetW()
     resetS()
-    return
 }
 
 resetW() {
