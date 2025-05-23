@@ -1,0 +1,23 @@
+name: "Test Report"
+on:
+  workflow_run:
+    workflows: ["Test"] # runs after Test workflow
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish test results to GitHub
+        uses: dorny/test-reporter@v2
+        if: ${{ !cancelled() }} # run this step even if previous step failed
+        with:
+          name: Yunit Tests
+          path: tests/junit.xml
+          reporter: java-junit

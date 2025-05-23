@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  pull_request:
+
+env:
+  YUNIT_EXIT_ON_TEST_FAILURE: 1
+
+jobs:
+  test:
+    name: Yunit Test Suite
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Download AutoHotkey v2 portable
+        run: |
+          Invoke-WebRequest -Uri https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip -OutFile ahk.zip
+          Expand-Archive ahk.zip -DestinationPath AHK
+
+      - name: Run all test files
+        shell: bash
+        run: ./AHK/AutoHotkey64.exe tests/test.ahk
+
+      - name: Upload JUnit test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-results
+          path: tests/junit.xml

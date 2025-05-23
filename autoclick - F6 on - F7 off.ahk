@@ -1,28 +1,30 @@
-﻿#SingleInstance Force
-#NoEnv
-#IfWinActive DeadByDaylight
-if (FileExist("icons/autopurchase.ico"))
-    Menu, Tray, Icon, icons/autopurchase.ico
+﻿#Requires AutoHotkey v2+
+#Include Lib\common.ahk
+#HotIf WinActive("DeadByDaylight")
 
-clickHoldTime := 50 ; in milliseconds
+setTrayIcon("icons/autopurchase.ico")
 
 IsEnabled := false
 
 ; Stop the clicking
 ~F7::
-  IsEnabled := false
-Return
+  {
+    global
+    IsEnabled := false
+  }
 
 ; Start the clicking
 ~F6::
-  IsEnabled := true
-
-  Loop
   {
-    If (!IsEnabled)
+    global
+    IsEnabled := true
+
+    Loop
+    {
+      If (!IsEnabled)
         Break
-    Click down, Left
-    Sleep, clickHoldTime
-    Click up, Left
+      Click("down, Left")
+      Sleep(50)
+      Click("up, Left")
+    }
   }
-Return
