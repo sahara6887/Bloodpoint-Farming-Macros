@@ -21,10 +21,10 @@ class AutospenderTests {
         Gdip_Shutdown(this.pToken)
     }
 
-    test_getBloodwebLevel_1440Level49() => assertFor("bloodweb\bloodweb_1440_level49.png", () => getBloodwebLevel() == 49)
-    test_getBloodwebLevel_1440Level49Reshade() => assertFor("bloodweb\bloodweb_1440_level49_reshade.png", () => getBloodwebLevel() == 49)
-    test_getBloodwebLevel__1080Level21() => assertFor("bloodweb\bloodweb_1080_level21.png", () => getBloodwebLevel() == 21)
-    test_getBloodwebLevel__1080Level21_reshade() => assertFor("bloodweb\bloodweb_1080_level21_reshade.png", () => getBloodwebLevel() == 21)
+    test_getBloodwebLevel_Level49_1440() => assertFor("bloodweb\bloodweb_1440_level49.png", () => getBloodwebLevel() == 49)
+    test_getBloodwebLevel_Level49Reshade1440() => assertFor("bloodweb\bloodweb_1440_level49_reshade.png", () => getBloodwebLevel() == 49)
+    test_getBloodwebLevel_Level21_1080() => assertFor("bloodweb\bloodweb_1080_level21.png", () => getBloodwebLevel() == 21)
+    test_getBloodwebLevel_Level21Reshade1080() => assertFor("bloodweb\bloodweb_1080_level21_reshade.png", () => getBloodwebLevel() == 21)
 
     test_isSettingsOpen_Abandon() => assertFor("settings\matchdetailsAbandon1440.png", isSettingsOpen.Bind())
     test_isSettingsOpen_Quit() => assertFor("settings\matchdetailsQuit1440.png", isSettingsOpen.Bind())
@@ -47,6 +47,8 @@ class AutospenderTests {
     test_isSettingsGraphicsFpsMenuOpen_1440() => assertFor("settings\graphicsFpsMenu1440.png", isSettingsGraphicsFpsMenuOpen.Bind())
     test_isSettingsGraphicsFpsMenuOpen_1080() => assertFor("settings\graphicsFpsMenu1080.png", isSettingsGraphicsFpsMenuOpen.Bind())
     test_isSettingsGraphicsFpsMenuOpen_NotOpen1440() => assertFor("settings\graphics1440.png", () => !isSettingsGraphicsFpsMenuOpen())
+
+    test_isAbandonConfirmOpen_1440() => assertFor("settings\confirmAbandon1440.png", isAbandonConfirmOpen.Bind())
 }
 
 setupFakeWindow(screenshotPath) {
