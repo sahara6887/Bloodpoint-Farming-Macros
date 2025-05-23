@@ -15,9 +15,9 @@ class LoggerOps {
         this.write(msg)
     }
     debug(msg) {
-        this.write(msg)
+        ; this.write(msg)
     }
     trace(msg) {
-        this.write(msg)
+        ; this.write(msg)
     }
 }
