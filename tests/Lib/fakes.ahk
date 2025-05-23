@@ -34,10 +34,8 @@ class TestLogger extends LoggerOps {
         try {
             throw Error("Capture stack")
         } catch as e {
-            ; Get the second line of the stack trace, which is the caller
             lines := StrSplit(e.Stack, "`n")
             if lines.Length >= 2 {
-                ; Example line: "▶ SomeFunc() (file.ahk:12)"
                 match := ""
                 if RegExMatch(lines[3], "(.*?) \((\d+)\) : \[([^]]*)\] .*", &match) {
                     path := match[1]
@@ -54,4 +52,25 @@ class TestLogger extends LoggerOps {
     info(msg) => this.write("info", msg)
     debug(msg) => this.write("debug", msg)
     trace(msg) => this.write("trace", msg)
+}
+
+/**
+ * Yunit doesn't support exit codes, so we need to implement our own to fail in CI.
+ */
+class YunitExitOnTestFailure {
+    failed := false
+    Update(Category, TestName, Result) {
+        if Result is Error {
+            this.failed := true
+        }
+    }
+
+    __Delete() {
+        ; We don't want to exit if we are running in the IDE--only in CI.
+        ; Env var set via github actions
+        if (this.failed and EnvGet("YUNIT_EXIT_ON_TEST_FAILURE") == "1") {
+            logger.warn("Tests failed, exiting with code 1")
+            ExitApp(1)
+        }
+    }
 }
