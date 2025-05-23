@@ -58,7 +58,10 @@ class TestLogger extends LoggerOps {
  * Yunit doesn't support exit codes, so we need to implement our own to fail in CI.
  */
 class YunitExitOnTestFailure {
-    failed := false
+    __New(instance) {
+        this.failed := false
+    }
+
     Update(Category, TestName, Result) {
         if Result is Error {
             this.failed := true
