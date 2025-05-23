@@ -1,4 +1,4 @@
-name: Publish ZIP (subset of repo)
+name: Publish ZIP
 
 on:
   push:
