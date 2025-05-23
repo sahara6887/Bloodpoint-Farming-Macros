@@ -11,15 +11,15 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install AutoHotkey v2
+      - name: Download AutoHotkey v2 portable
         run: |
-          Invoke-WebRequest -Uri https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19_setup.exe -OutFile AHK_Setup.exe
-          Start-Process -Wait -FilePath .\AHK_Setup.exe -ArgumentList '/install /silent /user'
+          Invoke-WebRequest -Uri https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip -OutFile ahk.zip
+          Expand-Archive ahk.zip -DestinationPath AHK
 
       - name: Run all test files
         shell: pwsh
         run: |
-          "C:\Program Files\AutoHotkey\v2\AutoHotkey64.exe" tests/test.ahk
+          .\AHK\AutoHotkey64.exe tests/test.ahk
 
       - name: Upload JUnit test results
         uses: actions/upload-artifact@v4
