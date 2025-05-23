@@ -2,6 +2,7 @@
 
 #Include scaling.ahk
 #Include colors.ahk
+#Include coords.ahk
 
 isDbdFinishedLoading() {
     ; The text of the ESC button moves around at different resolutions.
@@ -154,4 +155,24 @@ isHookSpaceOptionAvailable() {
     colorSpaceBg := scaled.getColor(1235, 1269)
 
     return colorHead = 0xFFFFFF && colorSpaceA = 0xFFFFFF && colorSpaceBg = 0x000000
+}
+
+tallyLeftArrowWhite := Coords2K(367, 1196)
+tallyLeftArrowDark := Coords2K(353, 1193)
+
+tallyRightArrowWhite := Coords2K(859, 1197)
+tallyRightArrowDark := Coords2K(872, 1194)
+
+tallyContinueButtonRed := Coords2K(2421, 1348)
+
+isTallyScreen() {
+    isLeftArrowWhiteish := isWhiteish(coords.getColor(tallyLeftArrowWhite))
+    isLeftArrowBlackish := isBlackish(coords.getColor(tallyLeftArrowDark))
+
+    isRightArrowWhite := isWhiteish(coords.getColor(tallyRightArrowWhite))
+    isRightArrowBlackish := isBlackish(coords.getColor(tallyRightArrowDark))
+
+    isContinueButtonRedish := isRedish(coords.getColor(tallyContinueButtonRed))
+
+    return isLeftArrowWhiteish && isLeftArrowBlackish && isRightArrowWhite && isRightArrowBlackish && isContinueButtonRedish
 }

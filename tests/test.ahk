@@ -22,24 +22,31 @@ class AutospenderTests {
         Gdip_Shutdown(this.pToken)
     }
 
-    testBloodweb1440Level49() => assertBloodwebLevel(49, A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49.png")
-    testBloodweb1440Level49Reshade() => assertBloodwebLevel(49, A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49_reshade.png")
+    test_getBloodwebLevel_1440Level49() => assertFor("bloodweb\bloodweb_1440_level49.png", () => getBloodwebLevel() == 49)
+    test_getBloodwebLevel_1440Level49Reshade() => assertFor("bloodweb\bloodweb_1440_level49_reshade.png", () => getBloodwebLevel() == 49)
     ; FIXME: bloodweb_1080_level21() => assertBloodwebLevel(21, A_ScriptDir "\screenshots\bloodweb\bloodweb_1080_level21.png")
     ; FIXME: bloodweb_1080_level21_reshade() => assertBloodwebLevel(21, A_ScriptDir "\screenshots\bloodweb\bloodweb_1080_level21_reshade.png")
 
-    testSettingsMatchDetailsAbandon() => assertIsSettingsOpen(A_ScriptDir "\screenshots\settings\matchdetails_abandon_1440.png")
-    testSettingsMatchDetailsQuit() => assertIsSettingsOpen(A_ScriptDir "\screenshots\settings\matchdetails_quit_1440.png")
+    test_isSettingsOpen_Abandon() => assertFor("settings\matchdetailsAbandon1440.png", isSettingsOpen.Bind())
+    test_isSettingsOpen_Quit() => assertFor("settings\matchdetailsQuit1440.png", isSettingsOpen.Bind())
 
-    testIsDbdFinishedLoadingMainMenu1440() => assertIsDbdFinishedLoading(A_ScriptDir "\screenshots\mainmenu\mainmenu_1440.png")
-    testIsDbdFinishedLoadingMainMenu1080() => assertIsDbdFinishedLoading(A_ScriptDir "\screenshots\mainmenu\mainmenu_1080.png")
-    testIsDbdFinishedLoadingBloodweb1440() => assertIsDbdFinishedLoading(A_ScriptDir "\screenshots\bloodweb\bloodweb_1440_level49.png")
+    test_isDbdFinishedLoading_1440() => assertFor("mainmenu\mainmenu_1440.png", isDbdFinishedLoading.Bind())
+    test_isDbdFinishedLoading_1080() => assertFor("mainmenu\mainmenu_1080.png", isDbdFinishedLoading.Bind())
+    test_isDbdFinishedLoading_Bloodweb1440() => assertFor("bloodweb\bloodweb_1440_level49.png", isDbdFinishedLoading.Bind())
 
-    testIsHookSpaceOptionAvailable1440() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHook1440.png")   
-    testIsHookSpaceOptionAvailable1080() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHook1080.png")   
-    testIsHookSpaceOptionAvailable1440Reshade() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHookReshade1440.png")
-    testIsHookSpaceOptionAvailable1080Reshade() => assertIsHookSpaceOptionAvailable(A_ScriptDir "\screenshots\match\matchHookReshade1080.png")
+    test_isHookSpaceOptionAvailable_1440() => assertFor("match\matchHook1440.png", isHookSpaceOptionAvailable.Bind())
+    test_isHookSpaceOptionAvailable_1080() => assertFor("match\matchHook1080.png", isHookSpaceOptionAvailable.Bind())
+    test_isHookSpaceOptionAvailable_1440Reshade() => assertFor("match\matchHookReshade1440.png", isHookSpaceOptionAvailable.Bind())
+    test_isHookSpaceOptionAvailable_1080Reshade() => assertFor("match\matchHookReshade1080.png", isHookSpaceOptionAvailable.Bind())
 
-    testIsAbandonEscapeOptionVisible1440() => assertIsAbandonEscapeOptionVisible(A_ScriptDir "\screenshots\match\matchAbandonEsc1440.png")
+    test_isAbandonEscapeOptionVisible_1440() => assertFor("match\matchAbandonEsc1440.png", isAbandonEscapeOptionVisible.Bind())
+
+    test_isSettingsGraphicsTabSelected_1440() => assertFor("settings\graphics1440.png", isSettingsGraphicsTabSelected.Bind())
+    test_isSettingsGraphicsTabSelected_1080() => assertFor("settings\graphics1080.png", isSettingsGraphicsTabSelected.Bind())
+    test_isSettingsGraphicsTabSelected_matchdetails1440() => assertFor("settings\matchdetailsQuit1440.png", () => !isSettingsGraphicsTabSelected())
+
+    test_isSettingsGraphicsFpsMenuOpen_1440() => assertFor("settings\graphicsFpsMenu1440.png", isSettingsGraphicsFpsMenuOpen.Bind())
+    test_isSettingsGraphicsFpsMenuOpen_1080() => assertFor("settings\graphicsFpsMenu1080.png", isSettingsGraphicsFpsMenuOpen.Bind())
 }
 
 setupFakeWindow(screenshotPath) {
@@ -58,28 +65,9 @@ assertBloodwebLevel(expectedLevel, screenshotPath) {
     Yunit.Assert(level == expectedLevel, "level=" level " expected=" expectedLevel)
 }
 
-assertIsSettingsOpen(screenshotPath) {
+assertFor(screenshot, predicate) {
+    screenshotPath := A_ScriptDir "\screenshots\" screenshot
     pBitmap := setupFakeWindow(screenshotPath)
-    Yunit.Assert(isSettingsOpen())
+    Yunit.Assert(predicate.Call())
     Gdip_DisposeImage(pBitmap)
 }
-
-assertIsDbdFinishedLoading(screenshotPath) {
-    pBitmap := setupFakeWindow(screenshotPath)
-    Yunit.Assert(isDbdFinishedLoading())
-    Gdip_DisposeImage(pBitmap)
-}
-
-assertIsHookSpaceOptionAvailable(screenshotPath) {
-    pBitmap := setupFakeWindow(screenshotPath)
-    Yunit.Assert(isHookSpaceOptionAvailable())
-    Gdip_DisposeImage(pBitmap)
-}
-
-
-assertIsAbandonEscapeOptionVisible(screenshotPath) {
-    pBitmap := setupFakeWindow(screenshotPath)
-    Yunit.Assert(isAbandonEscapeOptionVisible())
-    Gdip_DisposeImage(pBitmap)
-}
-

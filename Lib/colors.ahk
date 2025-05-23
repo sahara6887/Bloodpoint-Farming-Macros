@@ -39,6 +39,16 @@ isWhiteish(color, threshold := 0xD0) {
     return lowSat && brightEnough
 }
 
+isBlackish(color, threshold := 0x40) {
+    ; Most reshade filters leave near-pure-white pixels as near-pure-white.
+    r := (color >> 16) & 0xFF
+    g := (color >> 8) & 0xFF
+    b := color & 0xFF
+    lowSat := abs(r - g) < 5 && abs(r - b) < 5
+    darkEnough := r <= threshold
+    return lowSat && darkEnough
+}
+
 isRedish(color) {
     r := (color >> 16) & 0xFF
     g := (color >> 8) & 0xFF
