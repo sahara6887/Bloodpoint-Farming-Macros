@@ -1,0 +1,28 @@
+name: Test
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    name: Yunit Test Suite
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install AutoHotkey v2
+        run: |
+          Invoke-WebRequest -Uri https://www.autohotkey.com/download/ahk-v2.exe -OutFile AHK_Setup.exe
+          Start-Process -Wait -FilePath .\AHK_Setup.exe -ArgumentList '/S'
+
+      - name: Run all test files
+        shell: pwsh
+        run: |
+          "C:\Program Files\AutoHotkey\v2\AutoHotkey64.exe" tests/test.ahk
+
+      - name: Upload JUnit test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-results
+          path: tests/junit.xml
