@@ -10,7 +10,7 @@
 
 logger := TestLogger()
 
-Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug, YunitStdOut, YunitExitOnTestFailure).Test(AutospenderTests)
+Yunit.Use(YunitJUnit, YunitOutputDebug, YunitStdOut, YunitExitOnTestFailure).Test(AutospenderTests)
 
 class AutospenderTests {
     __New() {
