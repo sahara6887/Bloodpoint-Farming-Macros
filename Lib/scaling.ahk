@@ -10,25 +10,31 @@ ops := WindowOps()
 scaled := ScaledOps()
 
 class DbdWindowOps {
+    _width := 0
+    _height := 0
     checkScale() {
         static lastCheck := 0
 
         if (A_TickCount - lastCheck > 1000) {
             ; WinGetPos, winX, winY, DbdWidth, DbdHeight, DeadByDaylight
             ; WinGetPos does not return the client area height while windowed, regardless of CoordMode, Client.
-            hwnd := WinGetID("DeadByDaylight")
-            rect := Buffer(16, 0)
-            DllCall("GetClientRect", "ptr", hwnd, "ptr", rect.Ptr)
+            try {
+                hwnd := WinGetID("DeadByDaylight")
+                rect := Buffer(16, 0)
+                DllCall("GetClientRect", "ptr", hwnd, "ptr", rect.Ptr)
 
-            this._width := NumGet(rect, 8, "Int")
-            this._height := NumGet(rect, 12, "Int")
-            logger.debug("DBD window size: " this._width "x" this._height)
-
+                this._width := NumGet(rect, 8, "Int")
+                this._height := NumGet(rect, 12, "Int")
+                logger.debug("DBD window size: " this._width "x" this._height)
+            } catch TargetError {
+                logger.debug("DeadByDaylight window not found.")
+            }
             lastCheck := A_TickCount
         }
     }
     width => (this.checkScale(), this._width)
     height => (this.checkScale(), this._height)
+    isActive() => WinActive("DeadByDaylight")
 }
 
 /**
