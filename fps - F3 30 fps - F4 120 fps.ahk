@@ -27,7 +27,10 @@ selectFpsOption(x, y) {
     openSettingsGraphicsFpsMenu()
     scaled.click(x, y)
 
-    Sleep(20) ; Seems to be necessary.
+    ; Wait for the FPS menu to close before hitting ESC.
+    ; Hitting ESC too fast will cause the FPS option to not be saved.
+    doWithRetriesUntil("doNothing", "isSettingsGraphicsFpsMenuClosed")
+
     closeSettings()
 
     settingFpsTookMs := A_TickCount - start
@@ -49,6 +52,8 @@ openSettingsGraphicsFpsMenu() {
     ; Open FPS dropdown
     doWithRetriesUntil("openFpsMenu", "isSettingsGraphicsFpsMenuOpen")
 }
+
+isSettingsGraphicsFpsMenuClosed() => !isSettingsGraphicsFpsMenuOpen()
 
 closeSettings() {
     Send("{ESC}")
