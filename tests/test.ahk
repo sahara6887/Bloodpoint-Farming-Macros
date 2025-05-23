@@ -10,7 +10,7 @@
 
 logger := TestLogger()
 
-Yunit.Use(YunitJUnit, YunitOutputDebug, YunitStdOut, YunitExitOnTestFailure).Test(AutospenderTests)
+Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug, YunitStdOut, YunitExitOnTestFailure).Test(AutospenderTests)
 
 class AutospenderTests {
     __New() {
@@ -26,8 +26,9 @@ class AutospenderTests {
     test_getBloodwebLevel_Level21_1080() => assertFor("bloodweb\bloodweb_1080_level21.png", () => getBloodwebLevel() == 21)
     test_getBloodwebLevel_Level21Reshade1080() => assertFor("bloodweb\bloodweb_1080_level21_reshade.png", () => getBloodwebLevel() == 21)
 
-    test_isSettingsOpen_Abandon() => assertFor("settings\matchdetailsAbandon1440.png", isSettingsOpen.Bind())
-    test_isSettingsOpen_Quit() => assertFor("settings\matchdetailsQuit1440.png", isSettingsOpen.Bind())
+    test_isSettingsOpen_Abandon1440() => assertFor("settings\matchdetailsAbandon1440.png", isSettingsOpen.Bind())
+    test_isSettingsOpen_Quit1440() => assertFor("settings\matchdetailsQuit1440.png", isSettingsOpen.Bind())
+    test_isSettingsOpen_Graphics1080() => assertFor("settings\graphics1080.png", isSettingsOpen.Bind())
 
     test_isDbdFinishedLoading_1440() => assertFor("mainmenu\mainmenu_1440.png", isDbdFinishedLoading.Bind())
     test_isDbdFinishedLoading_1080() => assertFor("mainmenu\mainmenu_1080.png", isDbdFinishedLoading.Bind())

@@ -59,21 +59,30 @@ class TestLogger extends LoggerOps {
  */
 class YunitExitOnTestFailure {
     __New(instance) {
-        this.failed := false
+        this.pass := 0
+        this.fail := 0
     }
 
     Update(Category, TestName, Result) {
         if Result is Error {
-            this.failed := true
+            this.fail += 1
+        } else {
+            this.pass += 1
         }
     }
 
     __Delete() {
-        ; We don't want to exit if we are running in the IDE--only in CI.
-        ; Env var set via github actions
-        if (this.failed and EnvGet("YUNIT_EXIT_ON_TEST_FAILURE") == "1") {
-            logger.warn("Tests failed, exiting with code 1")
-            ExitApp(1)
+        if (this.fail > 0) {
+            logger.warn("FAIL: " this.fail " tests failed!")
+
+            ; We don't want to exit if we are running in the IDE--only in CI.
+            ; Env var set via github actions
+            if (EnvGet("YUNIT_EXIT_ON_TEST_FAILURE") == "1") {
+                logger.warn("exiting with code 1")
+                ExitApp(1)
+            }
+        } else {
+            logger.warn("PASS: " this.pass " tests passed.")
         }
     }
 }

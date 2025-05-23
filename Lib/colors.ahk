@@ -53,8 +53,10 @@ isRedish(color) {
     r := (color >> 16) & 0xFF
     g := (color >> 8) & 0xFF
     b := color & 0xFF
-    hue := RGBtoHSL(r, g, b)[1]
+    hsl := RGBtoHSL(r, g, b)
+    hue := hsl[1]
+    sat := hsl[2]
 
     ; Reddish hue range: 0–20 or 340–360
-    return hue <= 20 || hue >= 340
+    return (hue <= 20 || hue >= 340) and sat > 0.6 and r > 0x50
 }

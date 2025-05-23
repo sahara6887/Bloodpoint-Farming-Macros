@@ -12,19 +12,17 @@ isDbdFinishedLoading() {
 
     ; Main menu: Middle of the red '<' arrow
     ; Can be a dark red without reshade filters, so we must look at hue rather than red component intensity
-    backArrow := scaled.getColor(137, 1349)
+    backArrow := scaled.getColor(137, 1345)
     backArrowIsRed := isRedish(backArrow)
 
     return escTextIsWhite && backArrowIsRed
 }
 
+backEscWhiteE := Coords2K(239, 1348)
+backRedArrow := Coords2K(137, 1345)
 isSettingsOpen() {
-    ; 'E' of MATCH DETAILS (1999, 100)
-    ; ']' of ESC: (295, 1350)
-    settingsWhiteishMatchDetailsE := scaled.getColor(1999, 100)
-
-    ; Red arrow `<` of back button to add further specificity
-    settingsRedishBackArrow := scaled.getColor(133, 1350)
+    settingsWhiteishMatchDetailsE := coords.getColor(backEscWhiteE)
+    settingsRedishBackArrow := coords.getColor(backRedArrow)
 
     w := isWhiteish(settingsWhiteishMatchDetailsE, 0xB0)
     r := isRedish(settingsRedishBackArrow)
@@ -173,4 +171,15 @@ isTallyScreen() {
     isContinueButtonRedish := isRedish(coords.getColor(tallyContinueButtonRed))
 
     return isLeftArrowWhiteish && isLeftArrowBlackish && isRightArrowWhite && isRightArrowBlackish && isContinueButtonRedish
+}
+
+readySelfTickMark := Coords2K(2435, 1335)
+isReadiedUp() => isRedish(coords.getColor(readySelfTickMark))
+
+readyButtonRedBar := Coords2K(2430, 1257)
+readyButtonWhiteR := Coords2K(2278, 1260)
+isReadyButtonVisible() {
+    r := isRedish(coords.getColor(readyButtonRedBar))
+    w := isWhiteish(coords.getColor(readyButtonWhiteR), threshold := 0x90)
+    return r && w
 }
