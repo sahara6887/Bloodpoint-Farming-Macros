@@ -24,8 +24,8 @@ class AutospenderTests {
 
     test_getBloodwebLevel_1440Level49() => assertFor("bloodweb\bloodweb_1440_level49.png", () => getBloodwebLevel() == 49)
     test_getBloodwebLevel_1440Level49Reshade() => assertFor("bloodweb\bloodweb_1440_level49_reshade.png", () => getBloodwebLevel() == 49)
-    ; FIXME: bloodweb_1080_level21() => assertBloodwebLevel(21, A_ScriptDir "\screenshots\bloodweb\bloodweb_1080_level21.png")
-    ; FIXME: bloodweb_1080_level21_reshade() => assertBloodwebLevel(21, A_ScriptDir "\screenshots\bloodweb\bloodweb_1080_level21_reshade.png")
+    test_getBloodwebLevel__1080Level21() => assertFor("bloodweb\bloodweb_1080_level21.png", () => getBloodwebLevel() == 21)
+    test_getBloodwebLevel__1080Level21_reshade() => assertFor("bloodweb\bloodweb_1080_level21_reshade.png", () => getBloodwebLevel() == 21)
 
     test_isSettingsOpen_Abandon() => assertFor("settings\matchdetailsAbandon1440.png", isSettingsOpen.Bind())
     test_isSettingsOpen_Quit() => assertFor("settings\matchdetailsQuit1440.png", isSettingsOpen.Bind())
@@ -54,7 +54,6 @@ setupFakeWindow(screenshotPath) {
     pBitmap := Gdip_CreateBitmapFromFile(screenshotPath)
     dbdWindow := DbdTestWindow(pBitmap)
     ops := TestOps(pBitmap)
-    scaled := ScaledOps(ops)
     return pBitmap
 }
 

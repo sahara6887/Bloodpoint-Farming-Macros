@@ -1,14 +1,13 @@
 #Requires AutoHotkey v2+
 
 #Include logging.ahk
-#Include decorator.ahk
 
 CoordMode "Pixel", "Client"
 CoordMode "Mouse", "Client"
 
 dbdWindow := DbdWindowOps()
 ops := WindowOps()
-scaled := ScaledOps(ops)
+scaled := ScaledOps()
 
 class DbdWindowOps {
     checkScale() {
@@ -23,6 +22,7 @@ class DbdWindowOps {
 
             this._width := NumGet(rect, 8, "Int")
             this._height := NumGet(rect, 12, "Int")
+            logger.debug("DBD window size: " this._width "x" this._height)
 
             lastCheck := A_TickCount
         }
@@ -46,35 +46,11 @@ class WindowOps {
 }
 
 /**
- * Controls whether actions are taken or ignored completely.
- * AHK doesn't support hard interruption of a sequence of actions, so it must be done cooperatively.
- * It's more convenient to have all actions check a flag than to replicate the check everywhere.
- */
-class DisableableWindowOps extends Decorator {
-    enabled := false
-
-    mouseMove(x, y) {
-        if this.enabled
-            return this.underlying.mouseMove(x, y)
-    }
-    click(x, y, options := "") {
-        if this.enabled
-            return this.underlying.click(x, y, options)
-    }
-}
-
-/**
  * Scales the coordinates of the operations to the current window size.
  */
-class ScaledOps extends Decorator {
+class ScaledOps {
     baseWidth := 2560
     baseHeight := 1440
-    
-    __New(underlying := WindowOps(), baseWidth := 2560, baseHeight := 1440) {
-        super.__New(underlying)
-        this.baseWidth := baseWidth
-        this.baseHeight := baseHeight
-    }
 
     scaleX(x) => Round(x * dbdWindow.width / this.baseWidth)
     scaleY(y) => Round(y * dbdWindow.height / this.baseHeight)
@@ -84,14 +60,14 @@ class ScaledOps extends Decorator {
         scaledY := this.scaleY(y)
 
         logger.trace("scaled.click(" x "=>" scaledX ", " y "=>" scaledY ") " options)
-        return this.underlying.click(scaledX, scaledY, options)
+        return ops.click(scaledX, scaledY, options)
     }
 
     getColor(x, y) {
         scaledX := this.scaleX(x)
         scaledY := this.scaleY(y)
 
-        color := this.underlying.getColor(scaledX, scaledY)
+        color := ops.getColor(scaledX, scaledY)
 
         logger.trace("getColor(" x ", " y ") => (" scaledX ", " scaledY ")=0x" Format("{:06X}", color))
 
@@ -102,6 +78,6 @@ class ScaledOps extends Decorator {
         scaledX := this.scaleX(x)
         scaledY := this.scaleY(y)
 
-        this.underlying.mouseMove(scaledX, scaledY)
+        ops.mouseMove(scaledX, scaledY)
     }
 }

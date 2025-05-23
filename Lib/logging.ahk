@@ -5,16 +5,19 @@
 logger := LoggerOps()
 
 class LoggerOps {
+    write(msg) {
+        OutputDebug(msg "`n")
+    }
     warn(msg) {
-        OutputDebug(msg)
+        this.write(msg)
     }
     info(msg) {
-        OutputDebug(msg)
+        this.write(msg)
     }
     debug(msg) {
-        ; OutputDebug(msg)
+        ; this.write(msg)
     }
     trace(msg) {
-        ; OutputDebug(msg)
+        ; this.write(msg)
     }
 }

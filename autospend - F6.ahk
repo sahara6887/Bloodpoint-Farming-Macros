@@ -24,9 +24,7 @@ class Autospender {
     prevLevel := -1
     enabled := false
 
-    __New(ops := WindowOps()) {
-        this.ops := ops
-        this.scaled := DisableableWindowOps(ScaledOps(ops))
+    __New() {
         this.timerFunc := this.CheckPixels.Bind(this)
     }
 
@@ -38,11 +36,11 @@ class Autospender {
 
         level := getBloodwebLevel()
         if (level = -1) {
-            this.ops.click(201, 459) ; bloodweb tab
+            scaled.click(201, 459) ; bloodweb tab
             Sleep(100)
         }
 
-        this.scaled.mouseMove(910, 755)
+        scaled.mouseMove(910, 755)
         ToolTip("Autospending... (wiggle mouse to disable)")
     
         this.timer := SetTimer(this.timerFunc, 100)
@@ -62,18 +60,18 @@ class Autospender {
         if (level = 10 or level > 11) {
             ; Interrupt autopurchase
             Sleep(100)
-            this.ops.click(201, 143) ; character tab to cancel the autospending
+            scaled.click(201, 143) ; character tab to cancel the autospending
             Sleep(100)
-            this.ops.click(201, 459) ; bloodweb tab
+            scaled.click(201, 459) ; bloodweb tab
             Sleep(100)
-            this.ops.mouseMove(oldX, oldY)
+            scaled.mouseMove(oldX, oldY)
         }
     }
 
     CheckPixels() {
         ; Stop if the user tabs out or moves the mouse
         MouseGetPos(&mouseX, &mouseY)
-        mouseMoved := mouseX != this.scaled.scaleX(910) || mouseY != this.scaled.scaleY(755)
+        mouseMoved := mouseX != scaled.scaleX(910) || mouseY != scaled.scaleY(755)
         if (!WinActive("DeadByDaylight") || mouseMoved = true) {
             this.disable()
             return
@@ -92,15 +90,15 @@ class Autospender {
 
     cycleBloodweb() {
         ; Closing and opening the bloodweb skips the "level" interstitial
-        this.scaled.click(201, 459) ; bloodweb tab
+        scaled.click(201, 459) ; bloodweb tab
         Sleep(100)
-        this.scaled.click(201, 459) ; bloodweb tab
+        scaled.click(201, 459) ; bloodweb tab
     }
 
     clickAutoPurchase() {
-        this.scaled.click(910, 755, "down") ; autopurchase
+        scaled.click(910, 755, "down") ; autopurchase
         Sleep(50) ; hold time is important
-        this.scaled.click(910, 755, "up") ; autopurchase
+        scaled.click(910, 755, "up") ; autopurchase
     }
 
     expectedNextLevel() {
@@ -121,7 +119,7 @@ class Autospender {
             level := getBloodwebLevel()
         }
 
-        OutputDebug("level=" level)
+        logger.trace("level=" level)
 
         return level
     }
