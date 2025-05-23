@@ -1,6 +1,9 @@
 # Bloodpoint Farming Macros!
 Here you can find macros that will help with the repetitive/tedious aspects of farming bloodpoints in Dead by Daylight!
 
+# Download
+Download the latest at https://sahara6887.github.io/Bloodpoint-Farming-Macros/Bloodpoint-Farming-Macros.zip
+
 > [!CAUTION]
 > While these macros are not intended to give a competitive advantage, they are at odds with the BHVR Terms of Use. Use them at your own risk.
 
@@ -20,7 +23,6 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 
 ## Autospend
 - F6 to spend BP using the [fast bloodweb tech](https://www.reddit.com/r/deadbydaylight/s/njguTZBODp).
-- Experimental. May not work.
 - Supports 1080p and 1440p resolutions.
 - Run windowed at these resolutions if you need to.
 - Disable filters if they interfere.
@@ -32,7 +34,7 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - WASD = stop dancing
 
 ## FPS Switch
-- Very quickly switches between 30 & 120 FPS.
+- Quickly switches between 30 & 120 FPS.
 - F3 = Set 30 FPS / F4 = Set 120 FPS
 - UI scale must be 100%.
 
@@ -47,7 +49,7 @@ Here you can find macros that will help with the repetitive/tedious aspects of f
 - UI scale must be 100%
 
 ## Hit Counter
-- Press Ctrl+r to show a counter for the number of times you M1.
+- Show a counter for the number of times you M1.
 - Useful for killers to track the number of self-care hit rotations in Reactive builds.
 - Disappears after 10 seconds of no hits.
 - `Ctrl+` and `Ctrl-` to manually set (if necessary)
