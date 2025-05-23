@@ -14,7 +14,7 @@ jobs:
       - name: Install AutoHotkey v2
         run: |
           Invoke-WebRequest -Uri https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19_setup.exe -OutFile AHK_Setup.exe
-          Start-Process -Wait -FilePath .\AHK_Setup.exe -ArgumentList '/S'
+          Start-Process -Wait -FilePath .\AHK_Setup.exe -ArgumentList '/install /silent /user'
 
       - name: Run all test files
         shell: pwsh
