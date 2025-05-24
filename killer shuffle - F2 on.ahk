@@ -6,6 +6,9 @@ setTrayIcon("icons/shuffle.ico")
 ; Dances forward and backwards in place, maintaining chase with survivors.
 ; Stops automatically if DBD loses focus or any of WASD are pressed.
 
+IsSDown := false
+IsWDown := false
+
 ; Start dancing
 #HotIf WinActive("DeadByDaylight")
 ~F2::
@@ -24,8 +27,8 @@ setTrayIcon("icons/shuffle.ico")
 holdKey(key, holdTime, &isKeyDown) {
     global
     ; If DBD loses focus, stop. Don't spam "wswsws" to other windows.
-    title := WinGetTitle("A")
-    if (Trim(title) != "DeadByDaylight") {
+
+    if (!dbdWindow.isActive()) {
         disable()
         return
     }
