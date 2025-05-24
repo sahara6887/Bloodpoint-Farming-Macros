@@ -31,7 +31,7 @@ Macros to help with the repetitive/tedious aspects of farming bloodpoints in Dea
 
 ### Ready Up
 - Clicks the ready button as soon as it becomes visible.
-- Disables for 60 seconds if the user manually unreadies.
+- Disables if the user manually unreadies.
 - Re-enables if the user readies up again.
 
 ### FPS Switch
