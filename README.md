@@ -29,6 +29,11 @@ Macros to help with the repetitive/tedious aspects of farming bloodpoints in Dea
 - Auto-clicker for spending bloodpoints.
 - F6 = Toggle ON / F7 = Toggle OFF
 
+### Ready Up
+- Clicks the ready button as soon as it becomes visible.
+- Disables for 60 seconds if the user manually unreadies.
+- Re-enables if the user readies up again.
+
 ### FPS Switch
 - Quickly switches between 30 & 120 FPS.
 - F3 = Set 30 FPS / F4 = Set 120 FPS

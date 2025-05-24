@@ -173,13 +173,11 @@ isTallyScreen() {
     return isLeftArrowWhiteish && isLeftArrowBlackish && isRightArrowWhite && isRightArrowBlackish && isContinueButtonRedish
 }
 
-readySelfTickMark := Coords2K(2435, 1335)
+readySelfTickMark := Coords2K(2435, 1345)
 isReadiedUp() => isRedish(coords.getColor(readySelfTickMark))
 
 readyButtonRedBar := Coords2K(2430, 1257)
 readyButtonWhiteR := Coords2K(2278, 1260)
 isReadyButtonVisible() {
-    r := isRedish(coords.getColor(readyButtonRedBar))
-    w := isWhiteish(coords.getColor(readyButtonWhiteR), threshold := 0x90)
-    return r && w
+    return isRedish(coords.getColor(readyButtonRedBar)) and isWhiteish(coords.getColor(readyButtonWhiteR), threshold := 0x90)
 }
