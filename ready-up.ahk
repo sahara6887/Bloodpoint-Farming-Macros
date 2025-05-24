@@ -3,19 +3,19 @@
 
 /**
  * Clicks the ready button as soon as it becomes visible.
- * Disables for 60 seconds if the user manually unreadies.
+ * Disables if the user manually unreadies.
  * Re-enables if the user readies up again.
  */
 SetTimer(CheckReadyButton, 1000)
 setTrayIcon("icons/ready.ico")
 
-pausedAt := 0
+paused := false
 
 CheckReadyButton() {
     if (!dbdWindow.isActive())
         return
 
-    if (!isPaused() and isReadyButtonVisible() and !isReadiedUp()) {
+    if (!paused and isReadyButtonVisible() and !isReadiedUp()) {
         readyUp()
     }
 }
@@ -29,6 +29,8 @@ readyUp() {
     ; Capture the initial mouse position
     MouseGetPos(&initialX, &initialY)
 
+    if (paused)
+        return ; Final check to ensure we don't click if paused
     BlockInput("MouseMove")
     coords.mouseMove(readyButtonWhiteR)
     Sleep(20)
@@ -65,14 +67,14 @@ isMouseInReadyButtonRegion() {
     return result
 }
 
-isPaused() => A_TickCount - pausedAt < 60000
-
 unpause() {
-    global pausedAt
-    pausedAt := 0
+    logger.info("Unpausing. Will auto-ready.")
+    global paused
+    paused := false
 }
 
 pause() {
-    global pausedAt
-    pausedAt := A_TickCount
+    global paused
+    logger.info("Pausing")
+    paused := true
 }
