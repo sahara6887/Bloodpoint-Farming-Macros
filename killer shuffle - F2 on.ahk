@@ -19,8 +19,8 @@ IsWDown := false
         if (!IsEnabled)
             break
 
-        holdKey("w", 50, &IsWDown)
-        holdKey("s", 50, &IsSDown)
+        holdKey("w", 100, &IsWDown)
+        holdKey("s", 100, &IsSDown)
     }
 }
 
