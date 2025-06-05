@@ -8,16 +8,19 @@ class LoggerOps {
     write(msg) {
         OutputDebug(msg "`n")
     }
+    error(msg) {
+        this.write("error: " msg)
+    }
     warn(msg) {
-        this.write(msg)
+        this.write("warn: " msg)
     }
     info(msg) {
-        this.write(msg)
+        this.write("info: " msg)
     }
     debug(msg) {
-        ; this.write(msg)
+        ; this.write("debug: " msg)
     }
     trace(msg) {
-        ; this.write(msg)
+        ; this.write("trace: " msg)
     }
 }

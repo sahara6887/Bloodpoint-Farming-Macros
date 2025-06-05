@@ -72,3 +72,8 @@ Macros to help with the repetitive/tedious aspects of farming bloodpoints in Dea
 - Hooks a carried survivor when possible.
 - Adds years of life to your keyboard's spacebar.
 - UI scale must be 100%
+
+## Automatic Updates
+Scripts will update automatically when new fixes and macros are added.
+
+If you'd prefer to manage updates manually, `git clone https://github.com/BloodpointFarming/Bloodpoint-Farming-Macros.git` instead. Scripts will not auto-update if they see they're in a git repo.
