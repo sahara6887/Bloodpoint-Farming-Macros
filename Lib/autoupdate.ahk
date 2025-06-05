@@ -106,6 +106,7 @@ UpdateIfNewVersion(
         DirCopy(zipFile, installDir, Overwrite := true)
 
         ; Record the new ETag
+        FileDelete(etagFile)
         FileAppend(etag, etagFile)
 
         logger.debug("Update complete.")
