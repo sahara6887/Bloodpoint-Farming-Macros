@@ -48,6 +48,7 @@ class TestLogger extends LoggerOps {
         vsCodeRef := ".\" filename ":" line
         FileAppend(method ": " msg " [" vsCodeRef "]`n", "*")
     }
+    error(msg) => this.write("error", msg)
     warn(msg) => this.write("warn", msg)
     info(msg) => this.write("info", msg)
     debug(msg) => this.write("debug", msg)

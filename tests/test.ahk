@@ -7,10 +7,11 @@
 #Include ..\Lib\Gdip_All.ahk
 #Include ..\Lib\dbd.ahk
 #Include ..\Lib\scaling.ahk
+#Include AutoUpdateTests.ahk
 
 logger := TestLogger()
 
-Yunit.Use(YunitJUnit, YunitOutputDebug, YunitStdOut, YunitExitOnTestFailure).Test(AutospenderTests)
+Yunit.Use(YunitJUnit, YunitOutputDebug, YunitStdOut, YunitExitOnTestFailure).Test(AutospenderTests, AutoUpdateTests)
 
 class AutospenderTests {
     __New() {

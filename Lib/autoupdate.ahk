@@ -1,97 +1,109 @@
 #Requires AutoHotkey v2.0
+
 #Include logging.ahk
+#Include files.ahk
 
-getRootDir() {
-    SplitPath(A_LineFile, , &libDir)
-    return libDir "/.."
-}
-
-UpdateIfNewVersion(
-    installDir := getRootDir(),
-    url := "https://bloodpointfarming.github.io/Bloodpoint-Farming-Macros/Bloodpoint-Farming-Macros.zip"
-) {
-    ; If we're in a git repository, skip auto-update.
-    if FileExist(installDir "/.git") {
-        logger.info("Running from git repo. Skipping auto-update. Use git pull instead.")
-        return true
-    }
-
-    ; Store last update info in %appdata%\Bloodpoint-Farming-Macros
+class AutoUpdate {
     stateDir := A_AppData "/Bloodpoint-Farming-Macros"
-    DirCreate(stateDir)
-    etagFile := stateDir "/etag.txt"
-    lastUpdateCheckFile := stateDir "/last_update_check.txt"
+    installDir := ""
+    url := "https://bloodpointfarming.github.io/Bloodpoint-Farming-Macros/Bloodpoint-Farming-Macros.zip"
+    etagFile => this.stateDir "/etag.txt"
+    lastUpdateCheckFile => this.stateDir "/last_update_check.txt"
 
-    zipFile := A_Temp "\Bloodpoint-Farming-Macros.zip"
-    etag := ""
-    oldEtag := ""
-    isUrlHttps := RegExMatch(url, "^https://") ; as opposed to test file paths like C:\whatever.zip
-
-    /**
-     * Set the last update check time to now.
-     */
-    recordUpdateCheck() {
-        if FileExist(lastUpdateCheckFile)
-            FileDelete lastUpdateCheckFile
-        FileAppend(A_Now, lastUpdateCheckFile)
+    __New() {
+        installDir := ""
+        SplitPath(A_LineFile, , &installDir)
+        this.installDir := installDir "\.."
     }
 
-    if FileExist(lastUpdateCheckFile) {
-        lastUpdateCheck := FileRead(lastUpdateCheckFile)
-        if DateDiff(A_Now, lastUpdateCheck, "Hours") < 12 {
-            logger.info("Last update check was less than 12 hours ago. Skipping update check.")
-            recordUpdateCheck()
+    UpdateIfNewVersion() {
+        try {
+            if this.isGitRepo() {
+                logger.info("Running from git repo. Skipping auto-update. Use git pull instead.")
+                return
+            }
+
+            if !this.isUpdateTime() {
+                logger.info("Already checked for update recently. Skipping update check.")
+                return
+            }
+
+            ; Mark that we checked for an update so we don't retry for a while
+            FileOverwite(A_Now, this.lastUpdateCheckFile)
+
+            newEtag := this.getLatestEtag()
+            currentEtag := this.getCurrentEtag()
+            if newEtag = currentEtag {
+                logger.info("No update needed.")
+                return
+            }
+
+            if !this.doesUserAgreeToUpdate() {
+                logger.info("Update available, but user declined update.")
+                return
+            }
+
+            this.installLatestUpdate()
+
+            ; Record the new ETag
+            FileOverwite(newEtag, this.etagFile)
+
+            logger.debug("Update complete.")
+
+            this.reportSuccess()
+        } catch Error as e {
+            ; msg := "Error during update on " e.File ":" e.Line " " e.Message ; "`n" e.Stack
+            ; logger.error(msg)
+            MsgBox("Update failed on line " e.Line ". Giving up for now. Won't try again for at least 12 hours.", "Update Failed", 0x10)
+        }
+    }
+
+    isGitRepo() => FileExist(this.installDir "/.git")
+
+    isUpdateTime() {
+        if !FileExist(this.lastUpdateCheckFile)
             return true
-        }
-    } else {
-        ; Record the attempt early. If update fails later, don't retry until next update period.
-        ; User should NOT be forced to deal with this immediately.
-        recordUpdateCheck()
+
+        lastUpdateCheck := FileRead(this.lastUpdateCheckFile)
+        elapsedHours := DateDiff(A_Now, lastUpdateCheck, "Hours")
+        return elapsedHours > 12
     }
 
-    try {
+    getLatestEtag() {
         ; Check for updates via latest ETag.
-        if isUrlHttps {
-            whr := ComObject("WinHttp.WinHttpRequest.5.1")
-            whr.Open("HEAD", url, false)
-            whr.Send()
-            etag := whr.GetResponseHeader("ETag")
-            etag := RegExReplace(etag, "[^a-zA-Z0-9]", "")
-            logger.debug("ETag from server: " etag)
-        } else {
-            etag := FileGetTime(url, "M")
-        }
+        whr := ComObject("WinHttp.WinHttpRequest.5.1")
+        whr.Open("HEAD", this.url, false)
+        whr.Send()
+        etag := whr.GetResponseHeader("ETag")
+        etag := RegExReplace(etag, "[^a-zA-Z0-9]", "")
+        logger.debug("ETag from server: " etag)
+    }
 
+    getCurrentEtag() {
+        oldEtag := ""
         ; Get the ETag for our current version (if recorded)
-        if FileExist(etagFile) {
-            oldEtag := FileRead(etagFile)
+        if FileExist(this.etagFile) {
+            oldEtag := FileRead(this.etagFile)
             logger.debug("ETag from file: " oldEtag)
         }
+        return oldEtag
+    }
 
-        ; Is latest version already installed?
-        if etag = oldEtag {
-            logger.info("No update needed.")
-            return true
-        }
-
-        ; Ask user to confirm the update
+    doesUserAgreeToUpdate() {
         response := MsgBox("Macro updates are available. Update now?", "Macro Updates Available", 0x4 | 0x20)
-        if response != "Yes" {
-            logger.info("User declined update.")
-            return true
-        }
+        return response = "Yes"
+    }
 
-        ; Download update
-        if isUrlHttps {
-            Download(url, zipFile)
-            logger.debug("Downloaded new ZIP to " zipFile)
-        } else {
-            FileCopy(url, zipFile, Overwrite := true)
-        }
+    installLatestUpdate() {
+        zipFile := A_Temp "\Bloodpoint-Farming-Macros.zip"
+
+        ; Download the zip
+        this.downloadZip(zipFile)
+        logger.debug("Downloaded new ZIP to " zipFile)
 
         ; Clear old directory contents. Ignore failures due to locked files.
-        if DirExist(installDir) {
-            loop files installDir "\*", "FR" {
+        if DirExist(this.installDir) {
+            loop files this.installDir "\*", "FR" {
                 try {
                     if A_LoopFileAttrib ~= "D" {
                         DirDelete(A_LoopFilePath, Recurse := true)
@@ -103,17 +115,17 @@ UpdateIfNewVersion(
         }
 
         ; Unzip new macros into place
-        DirCopy(zipFile, installDir, Overwrite := true)
-
-        ; Record the new ETag
-        FileDelete(etagFile)
-        FileAppend(etag, etagFile)
-
-        logger.debug("Update complete.")
+        DirCopy(zipFile, this.installDir, Overwrite := true)
 
         ; Remove the temp zip file
         FileDelete zipFile
+    }
 
+    downloadZip(zipFile) {
+        Download(this.url, zipFile)
+    }
+
+    reportSuccess() {
         ; Feedback for the user
         if FileExist(A_ScriptFullPath) {
             ; Update was successful and script is still in the same location.
@@ -124,13 +136,7 @@ UpdateIfNewVersion(
             MsgBox("Update complete. Please restart the script.", "Update Complete")
             Exit()
         }
-        
-    } catch Error as e {
-        logger.error("Error during update on " e.File ":" e.Line " " e.Message "`n" e.Stack)
-        MsgBox("Update failed on line " e.Line ". Giving up for now. Won't try again for at least 12 hours.", "Update Failed", 0x10)
-        return false
     }
-    return true
 }
 
-UpdateIfNewVersion()
+AutoUpdate().UpdateIfNewVersion()
