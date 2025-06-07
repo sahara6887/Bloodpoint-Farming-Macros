@@ -102,7 +102,8 @@ class SandboxedAutoUpdate extends AutoUpdate {
     }
 
     MsgBox(params*) => "Yes"
-    Reload() => ""
+    Reload() => logger.info("suppressing Reload()")
+    Exit() => logger.info("suppressing Exit()")
 
     removeLastUpdateFile() => FileDelete(this.lastUpdateCheckFile)
 }

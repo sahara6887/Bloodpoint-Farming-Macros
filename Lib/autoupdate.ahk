@@ -135,12 +135,13 @@ class AutoUpdate {
         } else {
             ; Script probably moved to a new location.
             this.MsgBox("Update complete. Please restart the script.", "Update Complete")
-            Exit()
+            this.Exit()
         }
     }
 
     MsgBox(params*) => MsgBox(params*)
     Reload() => Reload()
+    Exit() => Exit()
 }
 
 AutoUpdate().UpdateIfNewVersion()
