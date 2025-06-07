@@ -1,18 +1,39 @@
 #Requires AutoHotkey v2.0
 
-#Include Yunit\Yunit.ahk
-#Include Yunit\Window.ahk
-#Include Yunit\StdOut.ahk
-#Include Yunit\JUnit.ahk
-#Include Yunit\OutputDebug.ahk
+#Include Lib\test_includes.ahk
 #Include ..\Lib\autoupdate.ahk
 #Include ..\Lib\files.ahk
 
+if (A_ScriptFullPath = A_LineFile)
+    Yunit
+        .Use(YunitJUnit, YunitOutputDebug, YunitStdOut, YunitExitOnTestFailure)
+        .Test(AutoUpdateTests)
+
 class AutoUpdateTests {
-    test_autoupdateScenario() {
+    test_realRepoAutoUpdate() {
+        ; Make sure the real zip exists and we're able to download it.
+        au := SandboxedAutoUpdate()
+        au.installDir := DirCreateOverwrite(A_Temp "\test_realAutoupdate\install")
+        au.stateDir := DirCreateOverwrite(A_Temp "\test_realAutoupdate\state")
+        au.UpdateIfNewVersion()
+
+        ; Assert that there is at least one .ahk file in the installDir
+        ahkFiles := []
+        loop files, au.installDir "\*.ahk"
+            ahkFiles.Push(A_LoopFileFullPath)
+        Yunit.assert(ahkFiles.Length > 0, "There should be at least one .ahk file in the installDir")
+
+        ; Check that etag was recorded
+        etagLatest := au.getLatestEtag()
+        etagCurrent := au.getCurrentEtag()
+        Yunit.Assert(etagLatest != "", etagLatest)
+        Yunit.Assert(etagLatest = etagCurrent, etagCurrent)
+    }
+
+    test_fakeRepoAutoUpdate() {
         repoDir := A_Temp "\FakeZipTests"
         zipFile := repoDir "\repo.zip"
-        tau := TestAutoUpdate(zipFile)
+        au := LocalSourceAutoUpdate(zipFile)
 
         ; Setup a dummy repo with known files.
         DirCreateOverwrite(repoDir)
@@ -31,49 +52,48 @@ class AutoUpdateTests {
         }
         createZip()
 
-        Yunit.Assert(!tau.isGitRepo())
-        Yunit.Assert(tau.isUpdateTime())
-        tau.UpdateIfNewVersion()
+        Yunit.Assert(!au.isGitRepo())
+        Yunit.Assert(au.isUpdateTime())
+        au.UpdateIfNewVersion()
 
-        exampleMacro := tau.installDir "\example.ahk"
+        exampleMacro := au.installDir "\example.ahk"
         Yunit.assert(FileExist(exampleMacro), "macro in update was not copied")
         Yunit.assert(FileRead(exampleMacro) = "original")
 
         ; Add a new macro to the installation
-        localMacro := tau.installDir "\local.ahk"
+        localMacro := au.installDir "\local.ahk"
         FileAppend("macro that doesn't exist in the repo", localMacro)
-        
+
         ; Try to update, but the recent update should prevent it.
-        Yunit.Assert(!tau.isUpdateTime(), "should not update again after an update")
-        tau.UpdateIfNewVersion()
+        Yunit.Assert(!au.isUpdateTime(), "should not update again after an update")
+        au.UpdateIfNewVersion()
         Yunit.assert(FileExist(localMacro)) ; still exists
 
         ; Remove the last update file so we can do more updates.
-        tau.removeLastUpdateFile()
-        Yunit.Assert(tau.isUpdateTime())
+        au.removeLastUpdateFile()
+        Yunit.Assert(au.isUpdateTime())
 
         ; Zip hasn't changed, so nothing should happen
-        tau.UpdateIfNewVersion()
+        au.UpdateIfNewVersion()
         Yunit.assert(FileExist(localMacro)) ; still exists
-
 
         ; Change the zip
         FileAppend("+update", repoDir "\example.ahk")
         createZip()
 
         ; Trigger a run again.
-        tau.removeLastUpdateFile()
-        tau.UpdateIfNewVersion()
+        au.removeLastUpdateFile()
+        au.UpdateIfNewVersion()
 
         Yunit.assert(!FileExist(localMacro), "Files not present in zip should be removed")
         Yunit.assert(FileRead(exampleMacro) = "original+update")
     }
 }
 
-class TestAutoUpdate extends AutoUpdate {
+class SandboxedAutoUpdate extends AutoUpdate {
     root := A_Temp "\TestAutoUpdate"
 
-    __New(zipFile) {
+    __New() {
         DirCreateOverwrite(this.root)
 
         this.installDir := this.root "/install"
@@ -81,14 +101,21 @@ class TestAutoUpdate extends AutoUpdate {
 
         this.stateDir := this.root "/state"
         DirCreate(this.stateDir)
-
-        this.url := zipFile
     }
     __Delete() {
         DirDelete(this.root, true)
     }
-    doesUserAgreeToUpdate() => true ; no MsgBox
-    reportSuccess() => true ; no MsgBox
+
+    MsgBox(params*) => "Yes"
+    Reload() => ""
+}
+
+class LocalSourceAutoUpdate extends SandboxedAutoUpdate {
+    __New(zipFile) {
+        super.__New()
+        this.url := zipFile
+    }
+
     getLatestEtag() => FileGetTime(this.url, "M") "-" FileGetSize(this.url)
     downloadZip(zipFile) => FileCopy(this.url, zipFile, Overwrite := true)
     removeLastUpdateFile() => FileDelete(this.lastUpdateCheckFile)

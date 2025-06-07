@@ -4,6 +4,7 @@ FileOverwite(text, Filename) {
     if FileExist(Filename)
         FileDelete(Filename)
     FileAppend(text, Filename)
+    return Filename
 }
 
 /**
@@ -13,4 +14,5 @@ DirCreateOverwrite(path) {
     if DirExist(path)
         DirDelete(path, true)
     DirCreate(path)
+    return path
 }

@@ -8,7 +8,7 @@ https://www.reddit.com/r/deadbydaylight/s/njguTZBODp
 
 setTrayIcon("icons/autopurchase.ico")
 
-spender := Autospender()
+spender := AutoSpender()
 
 ; Start spending
 ~F6:: {
@@ -20,7 +20,7 @@ spender := Autospender()
     spender.reliablyGetBloodwebLevel()
 }
 
-class Autospender {
+class AutoSpender {
     prevLevel := -1
     enabled := false
 

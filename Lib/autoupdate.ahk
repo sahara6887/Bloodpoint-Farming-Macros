@@ -33,6 +33,7 @@ class AutoUpdate {
 
             newEtag := this.getLatestEtag()
             currentEtag := this.getCurrentEtag()
+            logger.info("currentEtag=" currentEtag " newEtag=" newEtag)
             if newEtag = currentEtag {
                 logger.info("No update needed.")
                 return
@@ -52,9 +53,9 @@ class AutoUpdate {
 
             this.reportSuccess()
         } catch Error as e {
-            ; msg := "Error during update on " e.File ":" e.Line " " e.Message ; "`n" e.Stack
-            ; logger.error(msg)
-            MsgBox("Update failed on line " e.Line ". Giving up for now. Won't try again for at least 12 hours.", "Update Failed", 0x10)
+            msg := "Error during update on " e.File ":" e.Line " " e.Message "`n" e.Stack
+            logger.error(msg)
+            this.MsgBox("Update failed on line " e.Line ". Giving up for now. Won't try again for at least 12 hours.", "Update Failed", 0x10)
         }
     }
 
@@ -76,7 +77,8 @@ class AutoUpdate {
         whr.Send()
         etag := whr.GetResponseHeader("ETag")
         etag := RegExReplace(etag, "[^a-zA-Z0-9]", "")
-        logger.debug("ETag from server: " etag)
+        logger.debug("latest ETag from server: " etag)
+        return etag
     }
 
     getCurrentEtag() {
@@ -84,13 +86,12 @@ class AutoUpdate {
         ; Get the ETag for our current version (if recorded)
         if FileExist(this.etagFile) {
             oldEtag := FileRead(this.etagFile)
-            logger.debug("ETag from file: " oldEtag)
         }
         return oldEtag
     }
 
     doesUserAgreeToUpdate() {
-        response := MsgBox("Macro updates are available. Update now?", "Macro Updates Available", 0x4 | 0x20)
+        response := this.MsgBox("Macro updates are available. Update now?", "Macro Updates Available", 0x4 | 0x20)
         return response = "Yes"
     }
 
@@ -129,14 +130,17 @@ class AutoUpdate {
         ; Feedback for the user
         if FileExist(A_ScriptFullPath) {
             ; Update was successful and script is still in the same location.
-            MsgBox("Update complete. Reloading to pick up the changes.", "Update Complete")
-            Reload()
+            this.MsgBox("Update complete. Reloading to pick up the changes.", "Update Complete")
+            this.Reload()
         } else {
             ; Script probably moved to a new location.
-            MsgBox("Update complete. Please restart the script.", "Update Complete")
+            this.MsgBox("Update complete. Please restart the script.", "Update Complete")
             Exit()
         }
     }
+
+    MsgBox(params*) => MsgBox(params*)
+    Reload() => Reload()
 }
 
 AutoUpdate().UpdateIfNewVersion()
