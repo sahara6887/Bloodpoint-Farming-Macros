@@ -31,12 +31,11 @@ class AutoUpdateTests {
     }
 
     test_fakeRepoAutoUpdate() {
-        repoDir := A_Temp "\FakeZipTests"
+        repoDir := DirCreateOverwrite(A_Temp "\FakeZipTests")
         zipFile := repoDir "\repo.zip"
         au := LocalSourceAutoUpdate(zipFile)
 
         ; Setup a dummy repo with known files.
-        DirCreateOverwrite(repoDir)
         FileOverwite("original", repoDir "\example.ahk")
 
         createZip() {
@@ -91,16 +90,12 @@ class AutoUpdateTests {
 }
 
 class SandboxedAutoUpdate extends AutoUpdate {
-    root := A_Temp "\TestAutoUpdate"
+    root := DirCreateOverwrite(A_Temp "\TestAutoUpdate")
+    installDir := DirCreateOverwrite(this.root "/install")
+    stateDir := DirCreateOverwrite(this.root "/state")
 
     __New() {
-        DirCreateOverwrite(this.root)
-
-        this.installDir := this.root "/install"
-        DirCreate(this.installDir)
-
-        this.stateDir := this.root "/state"
-        DirCreate(this.stateDir)
+        ; Don't call super.New()
     }
     __Delete() {
         DirDelete(this.root, true)
@@ -108,6 +103,8 @@ class SandboxedAutoUpdate extends AutoUpdate {
 
     MsgBox(params*) => "Yes"
     Reload() => ""
+
+    removeLastUpdateFile() => FileDelete(this.lastUpdateCheckFile)
 }
 
 class LocalSourceAutoUpdate extends SandboxedAutoUpdate {
@@ -118,5 +115,4 @@ class LocalSourceAutoUpdate extends SandboxedAutoUpdate {
 
     getLatestEtag() => FileGetTime(this.url, "M") "-" FileGetSize(this.url)
     downloadZip(zipFile) => FileCopy(this.url, zipFile, Overwrite := true)
-    removeLastUpdateFile() => FileDelete(this.lastUpdateCheckFile)
 }
