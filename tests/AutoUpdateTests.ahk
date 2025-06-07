@@ -13,8 +13,6 @@ class AutoUpdateTests {
     test_realRepoAutoUpdate() {
         ; Make sure the real zip exists and we're able to download it.
         au := SandboxedAutoUpdate()
-        au.installDir := DirCreateOverwrite(A_Temp "\test_realAutoupdate\install")
-        au.stateDir := DirCreateOverwrite(A_Temp "\test_realAutoupdate\state")
         au.UpdateIfNewVersion()
 
         ; Assert that there is at least one .ahk file in the installDir
@@ -28,6 +26,18 @@ class AutoUpdateTests {
         etagCurrent := au.getCurrentEtag()
         Yunit.Assert(etagLatest != "", etagLatest)
         Yunit.Assert(etagLatest = etagCurrent, etagCurrent)
+    }
+
+    test_failsSilently() {
+        ; Pretend that github or the user's internet is down or the zip is missing.
+        au := SandboxedAutoUpdate()
+        au.url := "https://localhost:666"
+        file := au.installDir "\existingFile.ahk"
+        FileAppend("contents", file)
+
+        au.UpdateIfNewVersion()
+
+        Yunit.Assert(FileRead(file) = "contents")
     }
 
     test_fakeRepoAutoUpdate() {
