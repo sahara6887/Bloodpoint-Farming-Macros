@@ -1,5 +1,6 @@
 #Requires AutoHotkey v2+
 
+#Include autoupdate.ahk
 #Include colors.ahk
 #Include dbd.ahk
 #Include logging.ahk
