@@ -4,13 +4,14 @@
 #Include files.ahk
 
 class AutoUpdate {
-    stateDir := DirCreate(A_AppData "\Bloodpoint-Farming-Macros")
+    stateDir := A_AppData "\Bloodpoint-Farming-Macros"
     installDir := ""
     url := "https://bloodpointfarming.github.io/Bloodpoint-Farming-Macros/Bloodpoint-Farming-Macros.zip"
     etagFile => this.stateDir "\etag.txt"
     lastUpdateCheckFile => this.stateDir "\last_update_check.txt"
 
     __New() {
+        DirCreate(this.stateDir)
         installDir := ""
         SplitPath(A_LineFile, , &installDir)
         this.installDir := installDir "\.."
