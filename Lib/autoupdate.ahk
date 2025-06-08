@@ -4,11 +4,11 @@
 #Include files.ahk
 
 class AutoUpdate {
-    stateDir := DirCreateOverwrite(A_AppData "/Bloodpoint-Farming-Macros")
+    stateDir := DirCreateOverwrite(A_AppData "\Bloodpoint-Farming-Macros")
     installDir := ""
     url := "https://bloodpointfarming.github.io/Bloodpoint-Farming-Macros/Bloodpoint-Farming-Macros.zip"
-    etagFile => this.stateDir "/etag.txt"
-    lastUpdateCheckFile => this.stateDir "/last_update_check.txt"
+    etagFile => this.stateDir "\etag.txt"
+    lastUpdateCheckFile => this.stateDir "\last_update_check.txt"
 
     __New() {
         installDir := ""
@@ -59,7 +59,7 @@ class AutoUpdate {
         }
     }
 
-    isGitRepo() => FileExist(this.installDir "/.git")
+    isGitRepo() => FileExist(this.installDir "\.git")
 
     isUpdateTime() {
         if !FileExist(this.lastUpdateCheckFile)
