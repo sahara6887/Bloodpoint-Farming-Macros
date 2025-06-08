@@ -4,7 +4,7 @@
 #Include files.ahk
 
 class AutoUpdate {
-    stateDir := DirCreateOverwrite(A_AppData "\Bloodpoint-Farming-Macros")
+    stateDir := DirCreate(A_AppData "\Bloodpoint-Farming-Macros")
     installDir := ""
     url := "https://bloodpointfarming.github.io/Bloodpoint-Farming-Macros/Bloodpoint-Farming-Macros.zip"
     etagFile => this.stateDir "\etag.txt"
