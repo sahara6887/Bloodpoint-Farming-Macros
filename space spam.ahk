@@ -1,0 +1,28 @@
+#Requires AutoHotkey v2.0
+#Include Lib\common.ahk
+#HotIf WinActive("DeadByDaylight")
+
+/**
+ * Holding space will spam the space bar.
+ * 
+ * Useful for:
+ * - blowing up gens quickly
+ * - hooking survivors as soon as possible
+ */
+
+spaceHeld := false
+
+~$*Space:: {
+    global
+    spaceHeld := true
+    Sleep 200
+    while spaceHeld {
+        Send "{Space}"
+        Sleep 50
+    }
+}
+
+~$*Space Up:: {
+    global
+    spaceHeld := false
+}

@@ -34,6 +34,10 @@ Macros to help with the repetitive/tedious aspects of farming bloodpoints in Dea
 - Disables if the user manually unreadies.
 - Re-enables if the user readies up again.
 
+## Space Spam
+- Spams space bar events while the actual space bar is held down.
+- Useful for failing skill checks to regress a generator quickly.
+
 ### FPS Switch
 - Quickly switches between 30 & 120 FPS.
 - F3 = Set 30 FPS / F4 = Set 120 FPS
