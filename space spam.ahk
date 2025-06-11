@@ -8,6 +8,7 @@
  * Useful for:
  * - blowing up gens quickly
  * - hooking survivors as soon as possible
+ * - adding years of life to your keyboard's space bar
  */
 
 spaceHeld := false
