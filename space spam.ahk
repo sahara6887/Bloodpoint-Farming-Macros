@@ -19,7 +19,7 @@ spaceHeld := false
     Sleep 200
     while spaceHeld {
         Send "{Space}"
-        Sleep 50
+        Sleep 100
     }
 }
 
