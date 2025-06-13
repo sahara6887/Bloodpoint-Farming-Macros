@@ -37,6 +37,11 @@ Macros to help with the repetitive/tedious aspects of farming bloodpoints in Dea
 ### Tally
 - Screenshots BP, Scoreboard, Emblems, XP, etc. during the Tally screen and saves to `%userprofile%\Pictures\dbd-matches\`.
 - Clicks the CONTINUE button (optionally).
+- Keeps newest 300 screenshots (~100 MB)
+- <details>
+  <summary>Saved image sample<summary>
+  ![Sample image of tally screen produced by the macro](assets/tally.jpg)
+  </details>
 
 ### Space Spam
 - Spams space bar events while the actual space bar is held down.

@@ -27,10 +27,15 @@ config := {
         ; Adds ~1.6 seconds.
         xp: true,
         ; "Does this build pip?" Pretty quick, but unimportant for BP farming.
-        emblems: true
+        emblems: true,
     },
-    ; Where to store the screenshots?
-    captureDir: EnvGet("USERPROFILE") "\Pictures\dbd-matches"
+    ; How should screenshots be stored?
+    screenshot: {
+        ; Where to store the screenshots?
+        dir: EnvGet("USERPROFILE") "\Pictures\dbd-matches",
+        ; How many screenshots to retain? They're ~295 KB each. Aim for < 100 MB.
+        limit: 300,
+    },
 }
 
 Gdip_Startup()
@@ -47,6 +52,7 @@ CheckTallyScreen() {
 
     if isTallyScreen() {
         captureImages()
+        SetTimer(deleteOldestScreenshots, -100, Priority := -1) ; off the critical path
 
         if (config.continue)
             clickContinueWithDelay()
@@ -63,14 +69,14 @@ startTimer() {
         queueTimerRestart()
     } else {
         SetTimer(CheckTallyScreen, config.timerPollIntervalMs)
-        logger.info("Starting Tally checks")
+        logger.info("Watching for Tally screen...")
     }
 }
 
 queueTimerRestart() {
     SetTimer(CheckTallyScreen, 0) ; cancel timer
     SetTimer(startTimer, -config.timerRestartMs) ; delay restarting the timer
-    logger.info("Pausing Tally checks for " config.timerRestartMs " ms")
+    logger.info("Paused watching Tally screen for " config.timerRestartMs " ms")
 }
 
 captureImages() {
@@ -216,4 +222,28 @@ clickContinueWithDelay() {
         coords.click(tallyContinueButtonRed)
     }
     ToolTip
+}
+
+deleteOldestScreenshots() {
+    global config
+
+    ; Map is sorted: https://www.reddit.com/r/AutoHotkey/comments/qkxaog/small_hacks_to_sort_associative_array_by_integers/
+    fileMap := Map()
+    loop files config.screenshot.dir "\*.jpg"
+        fileMap[A_LoopFileTimeModified] := A_LoopFileFullPath
+
+    i := 1
+    excess := fileMap.Count - config.screenshot.limit
+    for time, name in fileMap {
+        if i > excess
+            break
+
+        try {
+            logger.info("Deleting old screenshot: " name)
+            FileDelete name
+        }
+        catch Error as e
+            logger.warn("Failed to delete file: " name " - " e.Message)
+        i++
+    }
 }
