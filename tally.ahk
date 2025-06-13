@@ -93,7 +93,6 @@ captureImages() {
     ; Scoreboard
     if config.capture.scoreboard {
         switchToTab(-1)
-        clickTabArrow(tallyLeftArrowWhite)
         Sleep 350
         scoreboard := screenshot(76, 362, width, 772)
     }
@@ -101,7 +100,6 @@ captureImages() {
     ; Match XP / Player Level
     if config.capture.xp {
         switchToTab(-2)
-        clickTabArrow(tallyLeftArrowWhite)
         Sleep 1500 ; 87 frames@60fps from click to Match XP (1.45 seconds)
         matchXp := screenshot(76, 918, width, 68)
     }
@@ -109,7 +107,6 @@ captureImages() {
     ; Score
     if config.capture.score {
         switchToTab(0)
-        clickTabArrow(tallyRightArrowWhite)
         waitUntil("isTallyBloodpointsScreen", 1500)
         scoreTop := screenshot(50, 301, width, 18, padding := 10)
         scoreBottom := screenshot(50, 541, width, 29, padding := 10)
@@ -195,16 +192,38 @@ screenshot(x, y, w, h, padding := 0) {
  */
 switchToTab(dest) {
     global tabIndex
+
+    logger.info("switchToTab " dest)
+
     while tabIndex != dest {
-        clickTabArrow(tabIndex > dest ? tallyLeftArrowWhite : tallyRightArrowWhite)
+        thisArrow := tabIndex > dest ? tallyLeftArrowWhite : tallyRightArrowWhite
+        clickTabArrow(thisArrow)
+
+        ; Update state
         tabIndex := tabIndex + (tabIndex > dest ? -1 : 1)
+        lastAction := A_TickCount
     }
 }
 
 clickTabArrow(xy) {
-    ; DBD is finicky when you click the same arrow twice in a row in a short period.
-    Sleep 100
+    static lastClick := A_TickCount
+    elapsed := A_TickCount - lastClick
+    minActionDurationMs := 20
+
+    ; If this function is called multiple times in a row,
+    ; ensure there's ample time between the previous click and our first.
+    if A_TickCount - lastClick < 20 {
+        ; DBD seems to have some debounce per button
+        ; Ensure we've waited enough time before repeating the click
+        Sleep minActionDurationMs - elapsed
+    }
+
+    ; DBD debounces when you click the same arrow twice in a row in a short period.
+    ; We can get around this by clicking on a blank region first.
+    coords.click(Coords2K(xy.x, xy.y + 50))
+    Sleep 50
     coords.click(xy)
+    lastClick := A_TickCount
 }
 
 /**
