@@ -136,7 +136,8 @@ captureImages() {
 
     logger.info("Capture took " A_TickCount - captureStartTime " ms.")
 
-    switchToTab(-1) ; Display all scores while we wait.
+    if !(config.continue and config.continueGracePeriodMs = 0)
+        switchToTab(-1) ; Display other player names, status, scores while we wait.
 
     ; Composite images vertically
     images := [emblems, emblemsGradeProgress, matchXp, scoreTop, scoreBottom, scoreboard, scoreMatchTotal]
