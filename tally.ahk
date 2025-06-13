@@ -38,8 +38,12 @@ config := {
     screenshot: {
         ; Where to store the screenshots?
         dir: EnvGet("USERPROFILE") "\Pictures\dbd-matches",
-        ; How many screenshots to retain? They're ~295 KB each at 1440p. Aim for < 100 MB.
+        ; How many screenshots to retain? They're ~80 KB each at 540 px width.
         limit: 300,
+        ; Resize the screenshot down to this width.
+        ; Useful to save disk space, especially from 4K sources.
+        ; 540 px is equivalent to 720p rendered resolution
+        maxWidth: 540
     },
 }
 
@@ -86,12 +90,12 @@ queueTimerRestart() {
 
 captureImages() {
     global tabIndex, config
-    width := 1097
     matchXp := 0, scoreTop := 0, scoreBottom := 0, scoreboard := 0, emblems := 0, emblemsGradeProgress := 0, scoreMatchTotal := 0
     captureStartTime := A_TickCount
 
     ; We start on the Score tab.
     global tabIndex := 0
+    width := 1080
 
     logger.info("Capturing tally screen...")
 
@@ -113,9 +117,10 @@ captureImages() {
     if config.capture.bloodpoints {
         switchToTab(0)
         waitUntil("isTallyBloodpointsScreen", 1500)
-        scoreTop := screenshot(50, 301, width, 18, padding := 10)
-        scoreBottom := screenshot(50, 541, width, 29, padding := 10)
-        scoreMatchTotal := screenshot(50, 627, width, 82, padding := 10)
+        left := 65
+        scoreTop := screenshot(left, 301, width, 18, padding := 10)
+        scoreBottom := screenshot(left, 541, width, 29, padding := 10)
+        scoreMatchTotal := screenshot(left, 627, width, 82, padding := 10)
     }
 
     ; Emblems
@@ -136,25 +141,17 @@ captureImages() {
     ; Composite images vertically
     images := [emblems, emblemsGradeProgress, matchXp, scoreTop, scoreBottom, scoreboard, scoreMatchTotal]
 
-    totalWidth := scaled.scaleX(width)
-    totalHeight := 0
-    for img in images {
-        if (img = 0)
-            continue
-        totalHeight += Gdip_GetImageHeight(img)
-    }
+    ; Remove all 0 values from images array
+    filteredImages := []
+    for img in images
+        if img != 0
+            filteredImages.Push(img)
+    images := filteredImages
 
-    composite := Gdip_CreateBitmap(totalWidth, totalHeight)
-    g := Gdip_GraphicsFromImage(composite)
+    composite := compositeImages(images)
 
-    yOffset := 0
-    for img in images {
-        if (img = 0)
-            continue
-        Gdip_DrawImage(g, img, 0, yOffset, Gdip_GetImageWidth(img), Gdip_GetImageHeight(img))
-        yOffset += Gdip_GetImageHeight(img)
+    for img in images
         Gdip_DisposeImage(img)
-    }
 
     timestamp := FormatTime(A_Now, "yyyy-MM-dd HH-mm-ss")
     dir := EnvGet("USERPROFILE") "\Pictures\dbd-matches"
@@ -163,8 +160,40 @@ captureImages() {
 
     filename := dir "\" timestamp ".jpg"
     Gdip_SaveBitmapToFile(composite, filename)
-    Gdip_DeleteGraphics(g)
     Gdip_DisposeImage(composite)
+}
+
+compositeImages(images) {
+    global config
+    totalWidth := 0
+    totalHeight := 0
+    for img in images {
+        totalWidth := Max(totalWidth, Gdip_GetImageWidth(img))
+        totalHeight += Gdip_GetImageHeight(img)
+    }
+
+    composite := Gdip_CreateBitmap(totalWidth, totalHeight)
+    g := Gdip_GraphicsFromImage(composite)
+
+    yOffset := 0
+    for img in images {
+        Gdip_DrawImage(g, img, 0, yOffset, Gdip_GetImageWidth(img), Gdip_GetImageHeight(img))
+        yOffset += Gdip_GetImageHeight(img)
+    }
+    Gdip_DeleteGraphics(g)
+
+    maxWidth := config.screenshot.maxWidth
+    if (totalWidth > maxWidth) {
+        newHeight := Round(totalHeight * (maxWidth / totalWidth))
+        resized := Gdip_CreateBitmap(maxWidth, newHeight)
+        g2 := Gdip_GraphicsFromImage(resized)
+        Gdip_DrawImage(g2, composite, 0, 0, maxWidth, newHeight)
+        Gdip_DeleteGraphics(g2)
+        Gdip_DisposeImage(composite)
+        composite := resized
+    }
+
+    return composite
 }
 
 /**
