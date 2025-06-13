@@ -10,7 +10,7 @@
 config := {
     ; Click the continue button?
     continue: false,
-    ; How long to wait before clicking continue? User can wiggle to cancel.
+    ; How long to wait before clicking continue? User can wiggle mouse to cancel.
     continueGracePeriodMs: 3000,
     ; How often to check? Responsiveness vs load.
     timerPollIntervalMs: 500,
@@ -96,7 +96,7 @@ captureImages() {
     captureStartTime := A_TickCount
 
     ; We start on the Score tab.
-    global tabIndex := 0
+    tabIndex := 0
     width := 1080
 
     logger.info("Capturing tally screen...")
@@ -156,18 +156,19 @@ captureImages() {
     for img in images
         Gdip_DisposeImage(img)
 
-    timestamp := FormatTime(A_Now, "yyyy-MM-dd HH-mm-ss")
     dir := EnvGet("USERPROFILE") "\Pictures\dbd-matches"
     if !DirExist(dir)
         DirCreate(dir)
 
-    filename := dir "\" timestamp ".jpg"
+    filename := dir "\" FormatTime(A_Now, "yyyy-MM-dd HH-mm-ss") ".jpg"
     Gdip_SaveBitmapToFile(composite, filename)
     Gdip_DisposeImage(composite)
 }
 
 compositeImages(images) {
     global config
+
+    ; Figure out dimensions
     totalWidth := 0
     totalHeight := 0
     for img in images {
@@ -175,6 +176,7 @@ compositeImages(images) {
         totalHeight += Gdip_GetImageHeight(img)
     }
 
+    ; Create and draw into composite image
     composite := Gdip_CreateBitmap(totalWidth, totalHeight)
     g := Gdip_GraphicsFromImage(composite)
 
@@ -185,6 +187,7 @@ compositeImages(images) {
     }
     Gdip_DeleteGraphics(g)
 
+    ; Resize down
     maxWidth := config.screenshot.maxWidth
     if (totalWidth > maxWidth) {
         newHeight := Round(totalHeight * (maxWidth / totalWidth))
@@ -256,7 +259,7 @@ clickTabArrow(xy) {
     }
 
     ; DBD debounces when you click the same arrow twice in a row in a short period.
-    ; We can get around this by clicking on a blank region first.
+    ; We can work around this by clicking on a blank region first.
     coords.click(Coords2K(xy.x, xy.y + 50))
     Sleep 40
     coords.click(xy)
@@ -271,7 +274,7 @@ clickContinueWithDelay() {
     global config
     coords.mouseMove(tallyContinueButtonRed)
     MouseGetPos(&oldX, &oldY)
-    ToolTip "Clicking CONTINUE... Wiggle to cancel."
+    ToolTip "Clicking CONTINUE... wiggle mouse to cancel."
     Sleep config.continueGracePeriodMs
     MouseGetPos(&newX, &newY)
     if (oldX = newX and oldY = newY) {
@@ -283,11 +286,13 @@ clickContinueWithDelay() {
 deleteOldestScreenshots() {
     global config
 
-    ; Map is sorted: https://www.reddit.com/r/AutoHotkey/comments/qkxaog/small_hacks_to_sort_associative_array_by_integers/
+    ; Inventory current screenshots
+    ; Map is sorted ascending: https://www.reddit.com/r/AutoHotkey/comments/qkxaog/small_hacks_to_sort_associative_array_by_integers/
     fileMap := Map()
     loop files config.screenshot.dir "\*.jpg"
         fileMap[A_LoopFileTimeModified] := A_LoopFileFullPath
 
+    ; Delete the excess
     i := 1
     excess := fileMap.Count - config.screenshot.limit
     for time, name in fileMap {
