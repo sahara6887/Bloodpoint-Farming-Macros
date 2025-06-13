@@ -23,15 +23,16 @@ config := {
         ; "Did everyone max? Correct right perks?"
         ; Capturing Bloodpoints and Scoreboard together takes ~1.3 seconds.
         scoreboard: true,
+        ; "Match time?"
+        ; Adds ~1.6 seconds.
+        ; Fairly slow, but enabled by default since it's useful to track match times.
+        ; Killer times should be considered authoritative.
+        ; Survivors may escape LONG before the match ends, which doesn't matter since they still have to wait for the killer to requeue.
+        xp: true,
         ; "Does this build pip?" Unimportant for BP farming, so disabled by default.
+        ; Useful for analyzing builds.
         ; Adds 700 ms.
         emblems: false,
-        ; "Offical match time?"
-        ; Adds ~1.6 seconds.
-        ; Disabled by default since it's fairly slow.
-        ; Killers may want to enable this since their times are authoritative for total match time.
-        ; Survivors may escape LONG before the match ends, which doesn't matter since they still have to wait for the killer to requeue.
-        xp: false,
     },
     ; How should screenshots be stored?
     screenshot: {
@@ -197,7 +198,7 @@ screenshot(x, y, w, h, padding := 0) {
 switchToTab(dest) {
     global tabIndex
 
-    logger.info("switchToTab " dest)
+    logger.debug("switchToTab " dest)
 
     while tabIndex != dest {
         thisArrow := tabIndex > dest ? tallyLeftArrowWhite : tallyRightArrowWhite
