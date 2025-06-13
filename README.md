@@ -34,7 +34,11 @@ Macros to help with the repetitive/tedious aspects of farming bloodpoints in Dea
 - Disables if the user manually unreadies.
 - Re-enables if the user readies up again.
 
-## Space Spam
+### Tally
+- Screenshots BP, Scoreboard, Emblems, XP, etc. during the Tally screen and saves to `%userprofile%\Pictures\dbd-matches\`.
+- Clicks the CONTINUE button (optionally).
+
+### Space Spam
 - Spams space bar events while the actual space bar is held down.
 - Useful for failing skill checks to regress a generator quickly.
 

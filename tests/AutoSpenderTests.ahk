@@ -68,24 +68,9 @@ class AutoSpenderTests {
     test_isReadyButtonVisible_Killer1440() => assertFor("pregame\unreadyKiller1440.png", isReadyButtonVisible.Bind())
 }
 
-setupFakeWindow(screenshotPath) {
-    global dbdWindow, ops, scaled
-    pBitmap := Gdip_CreateBitmapFromFile(screenshotPath)
-    dbdWindow := DbdTestWindow(pBitmap)
-    ops := TestOps(pBitmap)
-    return pBitmap
-}
-
 assertBloodwebLevel(expectedLevel, screenshotPath) {
     pBitmap := setupFakeWindow(screenshotPath)
     level := getBloodwebLevel()
     Gdip_DisposeImage(pBitmap)
     Yunit.Assert(level == expectedLevel, "level=" level " expected=" expectedLevel)
-}
-
-assertFor(screenshot, predicate) {
-    screenshotPath := A_ScriptDir "\screenshots\" screenshot
-    pBitmap := setupFakeWindow(screenshotPath)
-    Yunit.Assert(predicate.Call())
-    Gdip_DisposeImage(pBitmap)
 }

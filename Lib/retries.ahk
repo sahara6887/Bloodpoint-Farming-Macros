@@ -23,9 +23,10 @@ doWithRetriesUntil(actionName, predicateName, maxDurationMs := 500) {
     }
 
     logger.warn("Failed waiting for " . predicate.Name . " after " . maxDurationMs . " ms.")
-
-    Exit()
+    ; Exit()
 }
+
+waitUntil(predicateName, maxDurationMs := 500) => doWithRetriesUntil("doNothing", predicateName, maxDurationMs)
 
 doNothing() {
     ; used as a noop for doWithRetriesUntil(action, predicate)
