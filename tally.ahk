@@ -19,21 +19,25 @@ config := {
     ; What info should we capture in the screenshot?
     capture: {
         ; "Which category did I miss?"
-        score: true,
+        bloodpoints: true,
         ; "Did everyone max? Correct right perks?"
+        ; Capturing Bloodpoints and Scoreboard together takes ~1.3 seconds.
         scoreboard: true,
+        ; "Does this build pip?" Unimportant for BP farming, so disabled by default.
+        ; Adds 700 ms.
+        emblems: false,
         ; "Offical match time?"
-        ; This one is slow to check and possibly worth disabling, especially for survivors whose times are not authoritative.
         ; Adds ~1.6 seconds.
-        xp: true,
-        ; "Does this build pip?" Pretty quick, but unimportant for BP farming.
-        emblems: true,
+        ; Disabled by default since it's fairly slow.
+        ; Killers may want to enable this since their times are authoritative for total match time.
+        ; Survivors may escape LONG before the match ends, which doesn't matter since they still have to wait for the killer to requeue.
+        xp: false,
     },
     ; How should screenshots be stored?
     screenshot: {
         ; Where to store the screenshots?
         dir: EnvGet("USERPROFILE") "\Pictures\dbd-matches",
-        ; How many screenshots to retain? They're ~295 KB each. Aim for < 100 MB.
+        ; How many screenshots to retain? They're ~295 KB each at 1440p. Aim for < 100 MB.
         limit: 300,
     },
 }
@@ -43,7 +47,7 @@ Gdip_Startup()
 startTimer()
 
 ; Hotkey stub for testing
-; ~F3:: CheckTallyScreen()
+~^+!F3:: CheckTallyScreen() ; Ctrl + Shift + Alt + F3
 
 CheckTallyScreen() {
     global config
@@ -105,7 +109,7 @@ captureImages() {
     }
 
     ; Score
-    if config.capture.score {
+    if config.capture.bloodpoints {
         switchToTab(0)
         waitUntil("isTallyBloodpointsScreen", 1500)
         scoreTop := screenshot(50, 301, width, 18, padding := 10)
@@ -131,7 +135,7 @@ captureImages() {
     ; Composite images vertically
     images := [emblems, emblemsGradeProgress, matchXp, scoreTop, scoreBottom, scoreboard, scoreMatchTotal]
 
-    totalWidth := width
+    totalWidth := scaled.scaleX(width)
     totalHeight := 0
     for img in images {
         if (img = 0)
@@ -221,7 +225,7 @@ clickTabArrow(xy) {
     ; DBD debounces when you click the same arrow twice in a row in a short period.
     ; We can get around this by clicking on a blank region first.
     coords.click(Coords2K(xy.x, xy.y + 50))
-    Sleep 50
+    Sleep 40
     coords.click(xy)
     lastClick := A_TickCount
 }
