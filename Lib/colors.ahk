@@ -29,22 +29,22 @@ RGBtoHSL(r, g, b) {
     return [h, s, l]  ; returns hue (0..1), saturation, lightness
 }
 
-isWhiteish(color, threshold := 0xD0) {
+isWhiteish(color, threshold := 0xD0, tolerance := 5) {
     ; Most reshade filters leave near-pure-white pixels as near-pure-white.
     r := (color >> 16) & 0xFF
     g := (color >> 8) & 0xFF
     b := color & 0xFF
-    lowSat := abs(r - g) < 5 && abs(r - b) < 5
+    lowSat := abs(r - g) < tolerance && abs(r - b) < tolerance
     brightEnough := r >= threshold
     return lowSat && brightEnough
 }
 
-isBlackish(color, threshold := 0x40) {
+isBlackish(color, threshold := 0x40, tolerance := 5) {
     ; Most reshade filters leave near-pure-white pixels as near-pure-white.
     r := (color >> 16) & 0xFF
     g := (color >> 8) & 0xFF
     b := color & 0xFF
-    lowSat := abs(r - g) < 5 && abs(r - b) < 5
+    lowSat := abs(r - g) < tolerance && abs(r - b) < tolerance
     darkEnough := r <= threshold
     return lowSat && darkEnough
 }

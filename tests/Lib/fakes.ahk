@@ -88,3 +88,18 @@ class YunitExitOnTestFailure {
         }
     }
 }
+
+setupFakeWindow(screenshotPath) {
+    global dbdWindow, ops, scaled
+    pBitmap := Gdip_CreateBitmapFromFile(screenshotPath)
+    dbdWindow := DbdTestWindow(pBitmap)
+    ops := TestOps(pBitmap)
+    return pBitmap
+}
+
+assertFor(screenshot, predicate) {
+    screenshotPath := A_ScriptDir "\screenshots\" screenshot
+    pBitmap := setupFakeWindow(screenshotPath)
+    Yunit.Assert(predicate.Call())
+    Gdip_DisposeImage(pBitmap)
+}

@@ -162,16 +162,19 @@ tallyRightArrowDark := Coords2K(872, 1194)
 tallyContinueButtonRed := Coords2K(2421, 1348)
 
 isTallyScreen() {
-    isLeftArrowWhiteish := isWhiteish(coords.getColor(tallyLeftArrowWhite))
-    isLeftArrowBlackish := isBlackish(coords.getColor(tallyLeftArrowDark))
+    isLeftArrowWhiteish() => isWhiteish(coords.getColor(tallyLeftArrowWhite))
+    isLeftArrowBlackish() => isBlackish(coords.getColor(tallyLeftArrowDark),, tolerance := 10)
 
-    isRightArrowWhite := isWhiteish(coords.getColor(tallyRightArrowWhite))
-    isRightArrowBlackish := isBlackish(coords.getColor(tallyRightArrowDark))
+    isRightArrowWhite() => isWhiteish(coords.getColor(tallyRightArrowWhite))
+    isRightArrowBlackish() => isBlackish(coords.getColor(tallyRightArrowDark),, tolerance := 10)
 
-    isContinueButtonRedish := isRedish(coords.getColor(tallyContinueButtonRed))
+    isContinueButtonRedish() => isRedish(coords.getColor(tallyContinueButtonRed))
 
-    return isLeftArrowWhiteish && isLeftArrowBlackish && isRightArrowWhite && isRightArrowBlackish && isContinueButtonRedish
+    return isLeftArrowWhiteish() && isLeftArrowBlackish() && isRightArrowWhite() && isRightArrowBlackish() && isContinueButtonRedish()
 }
+
+tallyScoreMatchText := Coords2K(158, 630)
+isTallyBloodpointsScreen() => isWhiteish(coords.getColor(tallyScoreMatchText), threshold := 0xF8)
 
 cancelButtonRedMarker := Coords2K(2435, 1272)
 isReadiedUp() => isRedish(coords.getColor(cancelButtonRedMarker))
