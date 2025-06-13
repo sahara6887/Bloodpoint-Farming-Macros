@@ -47,6 +47,8 @@ config := {
     },
 }
 
+setTrayIcon("icons\tally.ico")
+
 Gdip_Startup()
 
 startTimer()
