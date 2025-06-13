@@ -39,8 +39,8 @@ Macros to help with the repetitive/tedious aspects of farming bloodpoints in Dea
 - Clicks the CONTINUE button (optionally).
 - Keeps newest 300 screenshots (~100 MB)
 - <details>
-  <summary>Saved image sample</summary>
-  ![Sample image of tally screen produced by the macro](assets/tally.jpg)
+  <summary>Screenshot</summary>
+  <img src="assets/tally.jpg" alt="Sample image of tally screen produced by the macro" width="600"/>
   </details>
 
 ### Space Spam
