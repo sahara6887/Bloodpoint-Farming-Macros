@@ -1,6 +1,7 @@
 #Requires AutoHotkey v2.0
 #Include Lib\common.ahk
 #HotIf WinActive("DeadByDaylight")
+setTrayIcon("icons\space.ico")
 
 /**
  * Holding space will spam the space bar.
