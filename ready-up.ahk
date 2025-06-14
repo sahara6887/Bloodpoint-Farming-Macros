@@ -31,21 +31,24 @@ readyUp() {
 
     if (paused)
         return ; Final check to ensure we don't click if paused
-    BlockInput("MouseMove")
+
+    withMouseBlocked(clickReadyButton)
+
+    ; Move mouse back to initial position
+    MouseMove(initialX, initialY, 0)
+}
+
+clickReadyButton() {
     coords.mouseMove(readyButtonWhiteR)
     Sleep(20)
     Click("down, Left")
     Sleep(50)
     Click("up, Left")
     Sleep(20)
-    BlockInput("MouseMoveOff")
-
-    ; Move mouse back to initial position
-    MouseMove(initialX, initialY, 0)
 }
 
 ~LButton::
-{   
+{
     ; Disable for 60 seconds if the user unreadies.
     ; Re-enable if the user readies up again.
     if (isMouseInReadyButtonRegion()) {

@@ -62,7 +62,7 @@ CheckTallyScreen() {
         return
 
     if isTallyScreen() {
-        captureImages()
+        withMouseBlocked(captureImages)
         SetTimer(deleteOldestScreenshots, -100, Priority := -1) ; off the critical path
 
         if (config.continue)

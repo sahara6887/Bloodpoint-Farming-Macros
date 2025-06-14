@@ -1,6 +1,7 @@
 #Requires AutoHotkey v2+
 
 #Include logging.ahk
+#Include blocking.ahk
 
 CoordMode "Pixel", "Client"
 CoordMode "Mouse", "Client"
@@ -42,9 +43,7 @@ class DbdWindowOps {
  */
 class WindowOps {
     click(x, y, options := "") {
-        BlockInput("MouseMove")  ; Block mouse movement
-        Click(x " " y " " options)
-        BlockInput("MouseMoveOff")  ; Re-enable mouse movement
+        withMouseBlocked(() => Click(x " " y " " options))
     }
 
     mouseMove(x, y) => MouseMove(x, y)
