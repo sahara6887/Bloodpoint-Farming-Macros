@@ -13,7 +13,7 @@ config := {
     ; How long to wait before clicking continue? User can wiggle mouse to cancel.
     continueGracePeriodMs: 3000,
     ; How often to check? Responsiveness vs load.
-    timerPollIntervalMs: 500,
+    timerPollIntervalMs: 200,
     ; How long until we start checking again after hitting continue?
     timerRestartMs: 120000,
     ; What info should we capture in the screenshot?
@@ -63,6 +63,7 @@ CheckTallyScreen() {
 
     if isTallyScreen() {
         withMouseBlocked(captureImages)
+        focusChatBox()
         SetTimer(deleteOldestScreenshots, -100, Priority := -1) ; off the critical path
 
         if (config.continue)
@@ -71,6 +72,9 @@ CheckTallyScreen() {
         queueTimerRestart()
     }
 }
+
+chatBox := Coords2K(2000, 1120)
+focusChatBox() => coords.click(chatBox)
 
 startTimer() {
     global config
